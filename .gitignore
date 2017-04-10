@@ -1,5 +1,6 @@
 # staging files and dirs #
 ##########################
+assets
 build
 
 # npm files and dirs #

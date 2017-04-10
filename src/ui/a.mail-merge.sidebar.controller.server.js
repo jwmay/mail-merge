@@ -157,7 +157,7 @@ function setReportsFolder() {
  * template file.
  */
 function showFilePicker() {
-  showDialog('a.incident-reporter.file-picker.view', 600, 425,
+  showDialog('a.mail-merge.file-picker.view', 600, 425,
           'Select a template file');
 }
 
@@ -168,7 +168,7 @@ function showFilePicker() {
  * storage folder.
  */
 function showFolderPicker() {
-  showDialog('a.incident-reporter.folder-picker.view', 600, 425,
+  showDialog('a.mail-merge.folder-picker.view', 600, 425,
           'Select a folder to store generated reports');
 }
 
