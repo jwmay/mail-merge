@@ -1,0 +1,180 @@
+body {
+  font-size: 15px;
+  line-height: 21px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #004C00;
+}
+
+h1 {
+  font-size: 1.6em;
+  margin: 20px 0 0 0;
+}
+
+p {
+  margin: 4px 0;
+}
+
+button {
+  font-size: 13px;
+}
+
+code {
+  padding: 2px 4px;
+  font-size: 80%;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  color: #357ae8;
+}
+
+.help {
+  color: #a94442;
+}
+
+
+/**
+ * Message Styles
+ */
+.msg {
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.msg-success {
+  background-color: #dff0d8;
+  border: 1px solid #d6e9c6;
+}
+
+.msg-warning {
+  background-color: #fcf8e3;
+  border: 1px solid #faebcc;
+}
+
+.msg-error {
+  background-color: #f2dede;
+  border: 1px solid #ebccd1;
+}
+
+.msg-information {
+  background-color: #eee;
+}
+
+
+/**
+ * Form Styles
+ */
+.form-options {
+  background-color: #eee;
+  padding: 20px;
+}
+
+.form-group {
+  position: relative;
+  left: -10px;
+  padding: 10px;
+}
+
+.form-group.error {
+  color: black;
+  background-color: rgba(255, 0, 0, 0.35);
+}
+
+.btn-bar > input {
+  margin: 10px;
+}
+
+
+/**
+ * Card styles
+ */
+.card {
+  padding: 24px 10px;
+  border-top: 1px solid #ddd;
+}
+
+.card:last-of-type {
+  border-bottom: 1px solid #ddd;
+}
+
+.card h4 {
+  margin: 0;
+  margin-bottom: 6px;
+}
+
+.file {
+  padding: 10px;
+  background-color: #eee;
+  margin: 6px 0;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.file i {
+  margin-right: 4px;
+}
+
+.card .btn-bar > input {
+  margin: 0;
+  margin-top: 6px;
+  margin-left: 10px;
+}
+
+.card .btn-bar > input:first-of-type {
+  margin-left: 0;
+}
+
+.comfy-list {
+  list-style: none;
+  padding: 0;
+  font-size: 13px;
+}
+
+.comfy-list li {
+  padding: 4px 8px;
+  border-top: 1px solid #eee;
+}
+
+.comfy-list li:last-of-type {
+  border-bottom: 1px solid #eee;
+}
+
+.comfy-list li:hover {
+  background-color: #eee;
+}
+
+.comfy-list li i {
+  color: #aaa;
+  cursor: pointer;
+  float: right;
+  margin-top: 4px;
+}
+
+.comfy-list li i:hover {
+  color: #696969;
+}
+
+.loading {
+  color: #aaa;
+  font-style: italic;
+  margin-left: 10px;
+  display: none;
+}
+
+.saving {
+  color: #aaa;
+  font-style: italic;
+  font-size: 12px;
+  margin-left: 6px;
+  line-height: 14px;
+  display: none;
+}
+
+.saved {
+  color: green;
+  font-style: italic;
+  font-size: 12px;
+  margin-left: 6px;
+  line-height: 14px;
+  display: none;
+}
