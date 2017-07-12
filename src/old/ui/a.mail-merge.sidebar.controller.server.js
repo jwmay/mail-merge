@@ -14,6 +14,61 @@
 
 
 /**
+ * 
+ */
+function getDataSpreadsheetDisplay() {
+  var dataSpreadsheet = new DataSpreadsheet();
+  // dataSpreadsheet.setId('10E05jyBlG1cLj7OAbCL_U6YVYWheDLpeG5Mf83Bkvec');
+  var id = dataSpreadsheet.getId();
+
+  // Get the link to display.
+  var linkDisplay = 'No file selected';
+  if (id !== null) {
+    var name = dataSpreadsheet.getName();
+    var url = dataSpreadsheet.getUrl();
+    linkDisplay = Utilities.formatString('<a href="%s" target="_blank">%s</a>',
+        url, name);
+  }
+
+  // Construct the display with filename and url.
+  var display = '<div class="card">' +
+      '<h4>Data Spreadsheet</h4>' +
+      '<div class="file">' +
+        '<i class="fa fa-file" aria-hidden="true"></i> ' +
+        linkDisplay +
+      '</div>' +
+      '<div class="btn-bar">' +
+        '<input type="button" value="Select file" onclick="selectFile_onclick();">' +
+      '</div>' +
+    '</div>';
+  return display;
+}
+
+
+/**
+ * Displays the file selector and returns an HTML-formatted string containing
+ * the link to the currently selected template file.
+ * 
+ * @returns {string} An HTML-formatted string.
+ */
+function setDataSpreadsheetFile() {
+  showFilePicker();
+  return getDataSpreadsheetDisplay();
+}
+
+
+/**
+ * Displays an HTML Service dialog in Google Sheets that contains client-side
+ * JavaScript code for the Google Picker API. Used to select the report
+ * template file.
+ */
+function showFilePicker() {
+  showDialog('a.mail-merge.file-picker.view', 900, 550,
+          'Select a spreadsheet');
+}
+
+
+/**
  * Returns an HTML-formatted string containing the link to the stored template
  * file.
  * 
@@ -115,18 +170,6 @@ function removeEmailAddress(email) {
 
 
 /**
- * Displays the file selector and returns an HTML-formatted string containing
- * the link to the currently selected template file.
- * 
- * @returns {string} An HTML-formatted string.
- */
-function setTemplateFile() {
-  showFilePicker();
-  return getTemplateFileDisplay();
-}
-
-
-/**
  * Generates a basic report template file and returns an HTML-formatted string
  * containing a link to the file.
  * 
@@ -148,17 +191,6 @@ function generateTemplateFile() {
 function setReportsFolder() {
   showFolderPicker();
   return getReportsFolderDisplay();
-}
-
-
-/**
- * Displays an HTML Service dialog in Google Sheets that contains client-side
- * JavaScript code for the Google Picker API. Used to select the report
- * template file.
- */
-function showFilePicker() {
-  showDialog('a.mail-merge.file-picker.view', 600, 425,
-          'Select a template file');
 }
 
 

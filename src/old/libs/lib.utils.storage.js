@@ -44,7 +44,8 @@ PropertyStore.prototype.setProperty = function(key, value, isArray) {
  * 
  * @param {string} key The key that labels the stored data.
  * @param {boolean=} isArray Set to true if retrieving a stored array.
- * @return A string if isArray set to false, otherwise, an array object.
+ * @return {string|array} A string if isArray set to false, otherwise, an array
+ *     object.
  */
 PropertyStore.prototype.getProperty = function(key, isArray) {
   var property = this.store.getProperty(key);

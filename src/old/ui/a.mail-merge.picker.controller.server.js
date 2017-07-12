@@ -43,18 +43,22 @@ function loadSelectedFile(files) {
   file.mime_type = DriveApp.getFileById(file.id).getMimeType();
 
   if (file.mime_type === MimeType.GOOGLE_DOCS) {
-    var templateFile = new TemplateFile();
-    templateFile.setFileId(file.id);
-    var success_message = '<div class="msg msg-success">' +
+    // Store the selected file id
+    var dataSpreadsheet = new DataSpreadsheet();
+    dataSpreadsheet.setId(file.id);
+
+    // Construct the success display message.
+    var success_message = '<div class="alert alert-success">' +
               'Template file updated' +
             '</div>' +
             showCloseButton();
+    
     // Refresh the sidebar to display the newly-selected file.
     onShowSidebar();
     return success_message;
   } else {
-    var error_message = '<div class="msg msg-error">' +
-              'Only Google Docs files can be used as a template' +
+    var error_message = '<div class="alert alert-error">' +
+              'Only a Google Sheets file can be used as a data source' +
             '</div>' +
             showCloseButton();
     return error_message;
@@ -75,7 +79,7 @@ function loadSelectedFolder(folders) {
   if (folder.type === 'folder') {
     var reportsFolder = new ReportsFolder();
     reportsFolder.setFolderId(folder.id);
-    var success_message = '<div class="msg msg-success">' +
+    var success_message = '<div class="alert alert-success">' +
               'Reports folder updated' +
             '</div>' +
             showCloseButton();
@@ -83,7 +87,7 @@ function loadSelectedFolder(folders) {
     onShowSidebar();
     return success_message;
   } else {
-    var error_message = '<div class="msg msg-error">' +
+    var error_message = '<div class="alert alert-error">' +
           'Only a folder can be selected to store reports' +
         '</div>' +
         showCloseButton();

@@ -28,41 +28,45 @@ code {
   color: #357ae8;
 }
 
-.help {
-  color: #a94442;
-}
-
 
 /**
- * Message Styles
+ * Alert styles
  */
-.msg {
+.alert {
   padding: 10px;
   margin-bottom: 10px;
 }
 
-.msg-success {
+.alert-success {
   background-color: #dff0d8;
   border: 1px solid #d6e9c6;
+  color: #3c763d;
 }
 
-.msg-warning {
+.alert-warning {
   background-color: #fcf8e3;
   border: 1px solid #faebcc;
+  color: #8a6d3b;
 }
 
-.msg-error {
+.alert-error {
   background-color: #f2dede;
   border: 1px solid #ebccd1;
+  color: #a94442;
 }
 
-.msg-information {
+.alert-information {
   background-color: #eee;
+}
+
+.alert-header {
+  margin: 2px 0;
+  color: inherit;
 }
 
 
 /**
- * Form Styles
+ * Form styles
  */
 .form-options {
   background-color: #eee;
@@ -91,6 +95,7 @@ code {
 .card {
   padding: 24px 10px;
   border-top: 1px solid #ddd;
+  position: relative;
 }
 
 .card:last-of-type {
@@ -154,13 +159,6 @@ code {
   color: #696969;
 }
 
-.loading {
-  color: #aaa;
-  font-style: italic;
-  margin-left: 10px;
-  display: none;
-}
-
 .saving {
   color: #aaa;
   font-style: italic;
@@ -177,4 +175,68 @@ code {
   margin-left: 6px;
   line-height: 14px;
   display: none;
+}
+
+
+/**
+ * Loading message styles and animation
+ */
+.loading {
+  color: #696969;
+  font-style: italic;
+}
+
+.loading i {
+  animation: spinner 2s infinite linear;
+  vertical-align: middle;
+}
+
+.loading span {
+  position: relative;
+  top: 3px;
+}
+
+.card-loading {
+  background-color: white;
+  opacity: 0.65;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+@keyframes spinner {
+  0% {
+    color: #26A0F5;
+    transform: rotate(0deg);
+  }
+  25% {
+    color: #4CAA50;
+  }
+  75% {
+    color: #26A0F5;
+  }
+  100% {
+    color: #26A0F5;
+    transform: rotate(359deg);
+  }
+}
+
+
+/**
+ * Formatting utilities
+ */
+.show {
+  display: block !important;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.mb-0 {
+  margin-bottom: 0;
+}
+
+.border-0 {
+  border: none;
 }

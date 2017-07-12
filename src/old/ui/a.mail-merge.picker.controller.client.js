@@ -14,7 +14,7 @@
 
 
 var DEVELOPER_KEY = 'AIzaSyCwQxkZsb6_OUI8LRHbEgR1UzxswOodGvM';
-var DIALOG_DIMENSIONS = {width: 600, height: 425};
+var DIALOG_DIMENSIONS = {width: 900, height: 550};
 var pickerApiLoaded = false;
 
 
@@ -61,8 +61,8 @@ function createFilePicker(token) {
   if (pickerApiLoaded && token) {
     var picker = new google.picker.PickerBuilder()
         
-        // Instruct Picker to display Documents only.
-        .addView(new google.picker.View(google.picker.ViewId.DOCUMENTS))
+        // Instruct Picker to display Spreadsheets only.
+        .addView(new google.picker.View(google.picker.ViewId.SPREADSHEETS))
 
         // Allow user to select files from Google Drive.
         .addView(new google.picker.DocsView()
@@ -84,7 +84,7 @@ function createFilePicker(token) {
 
     picker.setVisible(true);
   } else {
-    showError('<div class="msg msg-error">' +
+    showError('<div class="alert alert-error">' +
         'Unable to load the file picker. Please try again.' +
       '</div>' +
       closeButton());
@@ -124,7 +124,7 @@ function createFolderPicker(token) {
 
     picker.setVisible(true);
   } else {
-    showError('<div class="msg msg-error">' +
+    showError('<div class="alert alert-error">' +
         'Unable to load the folder picker. Please try again.' +
       '</div>' +
       closeButton());
@@ -141,7 +141,6 @@ function createFolderPicker(token) {
  */
 function filePickerCallback(data) {
   if (data.action == google.picker.Action.PICKED) {
-    updateDisplay('<em>Selecting...</em>');
     google.script.run
         .withSuccessHandler(updateDisplay)
         .loadSelectedFile(data.docs);
