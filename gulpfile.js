@@ -134,7 +134,7 @@ gulp.task('compile-env', ['compile-ui'], function() {
       break;
   }
 
-  return gulp.src(bases.src + 'environments/' + options.env + '/*.js')
+  return gulp.src(bases.src + 'env/' + options.env + '/*.js')
       .pipe(gulp.dest(bases.dist));
 });
 
