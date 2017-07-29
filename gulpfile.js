@@ -105,7 +105,7 @@ gulp.task('compile-server', ['compile-lib'], function() {
 // Concat all .server.js files in the ui directory
 gulp.task('compile-ui', ['compile-server'], function() {
   copyClientCode();
-  return gulp.src(bases.src + 'ui/*.server.js')
+  return gulp.src(bases.src + 'ui/**/*.server.js')
       .pipe(concat('ui.server.js'))
       .pipe(gulp.dest(bases.dist));
 });
@@ -149,9 +149,9 @@ gulp.task('upload-latest', ['compile-env'], shell.task(['gapps upload'],
 // Then copies those .html files to the upload staging folder.
 function copyClientCode() {
   return gulp.src([
-    bases.src + 'ui/*.html',
-    bases.src + 'ui/*.css',
-    bases.src + 'ui/*.client.js'])
+    bases.src + 'ui/**/*.html',
+    bases.src + 'ui/**/*.css',
+    bases.src + 'ui/**/*.client.js'])
       .pipe(
       rename(function(path) {
         if (path.extname !== '.html') {

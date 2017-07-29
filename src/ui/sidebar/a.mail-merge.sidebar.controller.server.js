@@ -13,12 +13,20 @@
 // limitations under the License.
 
 
+function getSidebarDisplay() {
+  var display = [];
+  display.unshift(getSpreadsheetDisplay());
+  display.unshift(getSheetSelectDisplay());
+  var html = display.join('\n');
+  return html;
+}
+
+
 /**
  * 
  */
-function getDataSpreadsheetDisplay() {
+function getSpreadsheetDisplay() {
   var dataSpreadsheet = new DataSpreadsheet();
-  // dataSpreadsheet.setId('10E05jyBlG1cLj7OAbCL_U6YVYWheDLpeG5Mf83Bkvec');
   var id = dataSpreadsheet.getId();
 
   // Get the link to display.
@@ -35,10 +43,10 @@ function getDataSpreadsheetDisplay() {
       '<h4>Data Spreadsheet</h4>' +
       '<div class="file">' +
         '<i class="fa fa-file" aria-hidden="true"></i> ' +
-        linkDisplay +
+        '<span id="dataSpreadsheet">' + linkDisplay + '</span>' +
       '</div>' +
       '<div class="btn-bar">' +
-        '<input type="button" value="Select file" onclick="selectFile_onclick();">' +
+        '<input type="button" value="Select file" onclick="selectSpreadsheet_onclick();">' +
       '</div>' +
     '</div>';
   return display;
@@ -46,14 +54,22 @@ function getDataSpreadsheetDisplay() {
 
 
 /**
- * Displays the file selector and returns an HTML-formatted string containing
- * the link to the currently selected template file.
  * 
- * @returns {string} An HTML-formatted string.
+ * @return {string} An HTML-formatted string to display in the sidebar.
  */
-function setDataSpreadsheetFile() {
-  showFilePicker();
-  return getDataSpreadsheetDisplay();
+function getSheetSelectDisplay() {
+  var dataSpreadsheet = new DataSpreadsheet();
+  var sheetNames = dataSpreadsheet.getSheetNames();
+  if (sheetNames !== null) {
+    var select = makeSelect(sheetNames);
+    var display = '<div class="card">' +
+        '<h4>Select a sheet</h4>' +
+        '<div>' +
+          select +
+        '</div>' +
+      '</div>';
+    return display;
+  }
 }
 
 
@@ -62,7 +78,7 @@ function setDataSpreadsheetFile() {
  * JavaScript code for the Google Picker API. Used to select the report
  * template file.
  */
-function showFilePicker() {
-  showDialog('a.mail-merge.file-picker.view', 900, 550,
+function showSpreadsheetPicker() {
+  showDialog('a.mail-merge.data-spreadsheet-picker.view', 900, 550,
           'Select a spreadsheet');
 }

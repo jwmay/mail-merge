@@ -14,6 +14,20 @@
 
 
 /**
+ * Insert any HTML file in the project into an outer HTML file.
+ * Called from within the outer HTML file.
+ * 
+ * @param {String} filename Name of the file in the project.
+ *    Do not include ".html".
+ * @return {String} HTML markup for the requested file.
+ */
+function include(filename) {
+  return HtmlService.createHtmlOutputFromFile(filename)
+      .getContent();
+}
+
+
+/**
  * Open a dialog window using an HTML template with the given dimensions.
  * 
  * @param {string} source Name of the HTML template file.
@@ -77,16 +91,33 @@ function showAlert(title, message) {
 
 
 /**
- * Insert any HTML file in the project into an outer HTML file.
- * Called from within the outer HTML file.
+ * Returns an HTML-formatted select element with the given options. The name
+ * of each option will be used as the option's value. Optional class names and
+ * an id can be specified for the select element.
  * 
- * @param {String} filename Name of the file in the project.
- *    Do not include ".html".
- * @return {String} HTML markup for the requested file.
+ * @param {array} options The options to add to the select element.
+ * @param {string=} classes The class name(s) of the select element. Default is
+ *        none.
+ * @param {string=} id The id of the select element. Default is none.
+ * @return {string} An HTML-formatted string containing the select element.
  */
-function include(filename) {
-  return HtmlService.createHtmlOutputFromFile(filename)
-      .getContent();
+function makeSelect(options, classes, id) {
+  // Default parameters are not supported by GAS server code, so define the
+  // optional variables here if they are not defined.
+  classes = classes === undefined ? '' : classes;
+  id = id === undefined ? '' : id;
+
+  var select = [];
+  select.push(Utilities.formatString('<select class="%s" id="%s">',
+          classes, id));
+  for (i = 0; i < options.length; i++) {
+    var option = options[i];
+    select.push(Utilities.formatString('<option value="%s">%s</option>',
+            option, option));
+  }
+  select.push('</select>');
+  var element = select.join('\n');
+  return element;
 }
 
 
@@ -114,15 +145,6 @@ function showCheckboxes(name, items, allChecked) {
     );
   }
   return checkboxes.join('');
-}
-
-
-/**
- * Returns and HTML-formatted string to display the 'Close' button.
- */
-function showCloseButton() {
-  button = '<input type="button" value="Close" class="btn" onclick="google.script.host.close();">';
-  return button;
 }
 
 

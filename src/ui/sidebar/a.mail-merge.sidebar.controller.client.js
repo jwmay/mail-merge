@@ -25,18 +25,21 @@ $(function() {
  * Runs sidebar initialization functions to retrieve and display stored data.
  */
 function initializeSidebar() {
+  // Display the data spreadsheet and file selector button.
   google.script.run
     .withSuccessHandler(updateDisplay)
-    .getDataSpreadsheetDisplay();
+    .getSidebarDisplay();
 }
 
 
 /**
- * Handle the selectFile button click response.
+ * Handle the 'Select File' button click response. This handles the process of
+ * allowing the user to select a data spreadsheet file, storing the file's id, 
+ * and updating the sidebar display with the file's name and a link to the file.
  */
-function selectFile_onclick() {
+function selectSpreadsheet_onclick() {
   showLoading();
   google.script.run
-    .withSuccessHandler(updateDisplay)
-    .setDataSpreadsheetFile();
+    .withSuccessHandler(hideLoading)
+    .showSpreadsheetPicker();
 }
