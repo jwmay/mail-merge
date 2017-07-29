@@ -96,25 +96,38 @@ function showAlert(title, message) {
  * an id can be specified for the select element.
  * 
  * @param {array} options The options to add to the select element.
+ * @param {array=} message The default message to display in the select element.
+ *        Default is "Select an item...".
+ * @param {string=} value The currently-selected value. Default is none.
+ * @param {string=} id The id of the select element. Default is none.
  * @param {string=} classes The class name(s) of the select element. Default is
  *        none.
- * @param {string=} id The id of the select element. Default is none.
  * @return {string} An HTML-formatted string containing the select element.
  */
-function makeSelect(options, classes, id) {
+function makeSelect(options, message, value, id, classes) {
   // Default parameters are not supported by GAS server code, so define the
   // optional variables here if they are not defined.
-  classes = classes === undefined ? '' : classes;
+  message = message === undefined ? 'Select an item...' : message;
+  value = value === undefined ? '' : value;
   id = id === undefined ? '' : id;
+  classes = classes === undefined ? '' : classes;
 
   var select = [];
-  select.push(Utilities.formatString('<select class="%s" id="%s">',
-          classes, id));
+  select.push(Utilities.formatString('<select id="%s" class="%s">',
+          id, classes));
+
+  // Construct the default option.
+  select.push('<option value="" class="default">' + message + '</option>');
+
+  // Construct the options.
   for (i = 0; i < options.length; i++) {
     var option = options[i];
-    select.push(Utilities.formatString('<option value="%s">%s</option>',
-            option, option));
+    var selected = option === value ? 'selected' : '';
+    select.push(Utilities.formatString('<option value="%s" %s>%s</option>',
+            option, selected, option));
   }
+
+  // Close and construct the select element.
   select.push('</select>');
   var element = select.join('\n');
   return element;
