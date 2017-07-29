@@ -21,6 +21,10 @@
  *     representing the selected file.
  */
 function loadSpreadsheetFile(files) {
+  // Clear all stored document properties before loading new file.
+  var storage = new PropertyStore();
+  storage.clean();
+
   var file = files[0];
   if (file.mimeType === MimeType.GOOGLE_SHEETS) {
     var dataSpreadsheet = new DataSpreadsheet();
