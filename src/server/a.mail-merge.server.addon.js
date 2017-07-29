@@ -41,7 +41,8 @@ function onOpen(e) {
   
   if (config.debug) {
     ui.addSeparator()
-        .addItem('Clear Document Properties', 'onClearDocumentProperties');
+        .addItem('Clear document properties', 'onClearDocumentProperties')
+        .addItem('Feature test', 'onFeatureTest');
   }
   
   ui.addToUi();
@@ -65,4 +66,10 @@ function onClearDocumentProperties() {
   var storage = new PropertyStore();
   storage.clean();
   onShowSidebar();
+}
+
+
+function onFeatureTest() {
+  var dataSpreadsheet = new DataSpreadsheet();
+  dataSpreadsheet.getSheetHeader('Students');
 }
