@@ -25,7 +25,7 @@ var DataSpreadsheet = function() {
 
 
 /**
- * Return the stored id of the data spreadsheet.
+ * Returns the stored id of the data spreadsheet.
  * 
  * @return {string} The spreadsheet id.
  */
@@ -36,7 +36,7 @@ DataSpreadsheet.prototype.getId = function() {
 
 
 /**
- * Store the data spreadsheet id.
+ * Stores the data spreadsheet id.
  * 
  * @param {string} id The spreadsheet id.
  */
@@ -46,7 +46,28 @@ DataSpreadsheet.prototype.setId = function(id) {
 
 
 /**
- * Return the data spreadsheet as a Google Spreadsheet object, or null if
+ * Returns the selected sheet name.
+ * 
+ * @return {string} The sheet name.
+ */
+DataSpreadsheet.prototype.getSheetName = function() {
+  var name = this.storage.getProperty('DATA_SHEET_NAME');
+  return name;
+};
+
+
+/**
+ * Stores the data sheet name.
+ * 
+ * @param {string} name The sheet name.
+ */
+DataSpreadsheet.prototype.setSheetName = function(name) {
+  this.storage.setProperty('DATA_SHEET_NAME', name);
+};
+
+
+/**
+ * Returns the data spreadsheet as a Google Spreadsheet object, or null if
  * no spreadsheet id is stored.
  * 
  * @return {Spreadsheet} The spreadsheet as a Google Spreadsheet object, or
@@ -64,7 +85,7 @@ DataSpreadsheet.prototype.getSpreadsheet = function() {
 
 
 /**
- * Return the name of the data spreadsheet, or null if no spreadsheet
+ * Returns the name of the data spreadsheet, or null if no spreadsheet
  * id is stored.
  * 
  * @return {string} The spreadsheet name, or null if no spreadsheet
@@ -79,7 +100,7 @@ DataSpreadsheet.prototype.getName = function() {
 
 
 /**
- * Return the url of the data spreadsheet, or null if no spreadsheet
+ * Returns the url of the data spreadsheet, or null if no spreadsheet
  * id is stored.
  * 
  * @return {string} The spreadsheet url, or null if no spreadsheet
@@ -94,7 +115,7 @@ DataSpreadsheet.prototype.getUrl = function() {
 
 
 /**
- * Return an array of all the sheet names in the spreadsheet, or null if no
+ * Returns an array of all the sheet names in the spreadsheet, or null if no
  * spreadsheet id is stored.
  * 
  * @return {array} An array containing the sheet names as strings.
@@ -109,4 +130,31 @@ DataSpreadsheet.prototype.getSheetNames = function() {
     sheetNames.push(sheet.getName());
   }
   return sheetNames;
+};
+
+
+/**
+ * Returns an array of header values for the given sheet name. If the sheet has
+ * no data or there is no header, returns null.
+ * 
+ * @param {string} name The sheet name.
+ * @return {array} The header names as strings, or null if there is no header.
+ */
+DataSpreadsheet.prototype.getSheetHeader = function(name) {
+  var spreadsheet = this.getSpreadsheet();
+  if (spreadsheet === null) return null;
+  var sheet = spreadsheet.getSheetByName(name);
+  
+  // Return null if there is no data in the sheet.
+  var maxCols = sheet.getLastColumn();
+  if (maxCols === 0) return null;
+  
+  var range = sheet.getRange(1, 1, 1, maxCols);
+  var header = range.getValues()[0];
+
+  // Return null if there are no headers.
+  header = header.removeEmpty();
+  if (header.length < 1) return null;
+
+  return header;
 };

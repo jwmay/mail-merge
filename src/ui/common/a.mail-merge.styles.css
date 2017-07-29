@@ -186,6 +186,33 @@ code {
 
 
 /**
+ * Selector styles
+ */
+.selector {
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: scroll;
+  font-size: 12px;
+}
+
+.selector ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.selector ul li {
+  padding: 8px;
+  cursor: pointer;
+  border: 1px solid #eee;
+}
+
+.selector ul li:hover {
+  background-color: #eee;
+}
+
+
+/**
  * Formatting utilities
  */
 .hidden {

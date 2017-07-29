@@ -14,10 +14,25 @@
 
 
 /**
- * Sidebar initialization and user-response functions to load the sidebar.
+ * Sidebar initialization and user-response functions.
  */
 $(function() {
   initializeSidebar();
+
+  // Handle changes to the sheet selector by replacing the data selector.
+  $(document).on('change', '#sheetSelector', function() {
+    // Remove the data selector display before replacement and the default
+    // option in the sheet selector.
+    $('#headerSelectDisplay').remove();
+    $('#sheetSelector option.default').remove();
+    
+    var sheet = $(this).val();
+    if (sheet !== '') {
+      google.script.run
+        .withSuccessHandler(updateDisplay)
+        .updateSelectedSheet(sheet);
+    }
+  });
 });
 
 
