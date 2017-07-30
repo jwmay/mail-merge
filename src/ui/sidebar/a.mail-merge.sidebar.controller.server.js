@@ -17,19 +17,29 @@
  * Returns and HTML-formatted string containing the user-interface to display
  * on the sidebar.
  * 
- * @return {string} An HTML-formatted string to display the user-interface.
+ * @return {displayObjects[]} An array of display objects to construct
+ *        the user-interface.
  */
 function getSidebarDisplay() {
   var spreadsheet = new DataSpreadsheet();
+  var sheetNames = spreadsheet.getSheetNames();
   var sheet = spreadsheet.getSheetName();
 
-  var display = [];
-  display.unshift(getSpreadsheetDisplay());
-  display.unshift(getSheetSelectDisplay());
-  if (sheet !== null) display.unshift(getHeaderSelectDisplay());
+  // Construct the individual displayObjects for each component
+  // of the sidebar display and store them in an array.
+  var displayObjects = [];
+  displayObjects.push(getSpreadsheetDisplay());
   
-  var html = display.join('\n');
-  return html;
+  // Get the sheet selector display only if there are sheet names available.
+  if (sheetNames !== null) {
+    displayObjects.push(getSheetSelectDisplay());
+  }
+
+  // Get the data selector only if a sheet is selected.
+  if (sheet !== null) {
+    displayObjects.push(getHeaderSelectDisplay());
+  }
+  return displayObjects;
 }
 
 
@@ -47,10 +57,9 @@ function updateSelectedSheet(name) {
 
 
 /**
- * Returns an HTML-formatted string containing the spreadsheet file selector.
+ * Returns a display object containing the spreadsheet file selector.
  * 
- * @return {string} An HTML-formatted string to display the spreadsheet
- *        file selector.
+ * @return {displayObject} A dislpay object for the spreadsheet file selector.
  */
 function getSpreadsheetDisplay() {
   var spreadsheet = new DataSpreadsheet();
@@ -65,48 +74,45 @@ function getSpreadsheetDisplay() {
         url, name);
   }
 
-  // Construct the display with filename and url.
-  var display = '<div class="card" id="spreadsheetDisplay">' +
-      '<h4>Spreadsheet</h4>' +
+  // Construct the display object with filename and url.
+  var content = '<h4>Spreadsheet</h4>' +
       '<div class="file">' +
         '<i class="fa fa-file" aria-hidden="true"></i> ' +
         '<span id="dataSpreadsheet">' + linkDisplay + '</span>' +
       '</div>' +
       '<div class="btn-bar">' +
         '<input type="button" value="Select file" onclick="selectSpreadsheet_onclick();">' +
-      '</div>' +
-    '</div>';
+      '</div>';
+  var display = getDisplayObject('card', content, 'spreadsheetDisplay');
   return display;
 }
 
 
 /**
- * Returns an HTML-formatted string containing the sheet selector.
+ * Returns a display object containing the sheet selector.
  * 
- * @return {string} An HTML-formatted string to display the sheet selector.
+ * @return {displayObject} A display object for the sheet selector.
  */
 function getSheetSelectDisplay() {
   var spreadsheet = new DataSpreadsheet();
   var selected = spreadsheet.getSheetName();
-  var sheetNames = spreadsheet.getSheetNames();
-  if (sheetNames !== null) {
-    var select = makeSelect(sheetNames, 'Select a sheet...', selected,
-            'sheetSelector');
-    var display = '<div class="card" id="sheetSelectDisplay">' +
-        '<h4>Sheet</h4>' +
-        '<div>' +
-          select +
-        '</div>' +
+  var sheetNames = spreadsheet.getSheetNames();  
+  var select = makeSelect(sheetNames, 'Select a sheet...', selected,
+          'sheetSelector');
+  var content = '<h4>Sheet</h4>' +
+      '<div>' +
+        select +
       '</div>';
-    return display;
-  }
+  var display = getDisplayObject('card', content, 'sheetSelectDisplay');
+  return display;
 }
 
 
 /**
- * Returns an HTML-formatted string containing the data selector.
+ * Returns a display object containing the data selector. If no headers are
+ * found in the selected sheet, an error display object is returned.
  * 
- * @return {string} An HTML-formatted string to display the data selector.
+ * @return {displayObject} A display object for the data selector.
  */
 function getHeaderSelectDisplay() {
   var spreadsheet = new DataSpreadsheet();
@@ -124,20 +130,18 @@ function getHeaderSelectDisplay() {
     var listDisplay = list.join('\n');
     
     // Construct the HTML display.
-    var display = '<div class="card" id="headerSelectDisplay">' +
-        '<h4>Select data</h4>' +
+    var content = '<h4>Select data</h4>' +
         '<div class="selector">' +
           '<ul>' +
             listDisplay +
           '</ul>' +
-        '</div>' +
-      '</div>';
+        '</div>';
+    var display = getDisplayObject('card', content, 'headerSelectDisplay');
     return display;
   } else {
-    var error = '<div class="card alert alert-error" id="headerSelectDisplay">' +
-            'No headers found in the selected sheet.' +
-          '</div>';
-    return error;
+    var errorContent = 'No headers found in the selected sheet.';
+    var errorDisplay = getDisplayObject('alert-error', errorContent);
+    return errorDisplay;
   }
 }
 

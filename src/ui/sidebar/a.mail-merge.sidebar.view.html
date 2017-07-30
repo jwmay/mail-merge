@@ -2,8 +2,9 @@
 <html>
   <head>
     <base target="_top">
-    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
-    <script src="https://use.fontawesome.com/0aaec818ef.js"></script>
+    <?!= include('lib.google-styles.css'); ?>
+    <?!= include('lib.font-awesome.css'); ?>
+    <?!= include('lib.display.styles.css'); ?>
     <style>
       <?!= include('a.mail-merge.styles.css'); ?>
     </style>
@@ -13,18 +14,19 @@
       <div class="logo">
         <img src="https://cdn.rawgit.com/jwmay/mail-merge/3921c562/img/simply-mail-merge-logo.png">
       </div>
-      <div id="loading" class="loading hidden">
+      <!-- If you don't run updateDisplay() when initializing the sidebar/dialog, -->
+      <!--  add .hidden to the #loading and #loading-overlay divs below. -->
+      <div id="loading" class="loading">
         <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>
         <span>Loading...</span>
       </div>
-      <div id="loading-overlay" class="loading-overlay hidden"></div>
-      <div id="contents">
-        <div id="error" class="mb-0 hidden"></div>
-        <div id="display"></div>
-      </div>
+      <div id="loading-overlay" class="loading-overlay"></div>
+      <div id="alert"></div>
+      <div id="content"></div>
     </div>
     
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <?!= include('lib.jquery.client.js'); ?>
+    <?!= include('lib.display.client.js'); ?>
     <script>
       <?!= include('a.mail-merge.display.controller.client.js'); ?>
       <?!= include('a.mail-merge.sidebar.controller.client.js'); ?>

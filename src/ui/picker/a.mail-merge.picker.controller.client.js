@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-var DIALOG_DIMENSIONS = {width: 900, height: 550};
+var PICKER_DIMENSIONS = {width: 900, height: 550};
 var pickerApiLoaded = false;
 
 
@@ -74,13 +74,15 @@ function createSpreadsheetPicker(token) {
         .setOrigin(google.script.host.origin)
         
         // Instruct Picker to fill the dialog, minus 2 px for the border.
-        .setSize(DIALOG_DIMENSIONS.width - 2,
-            DIALOG_DIMENSIONS.height - 2)
+        .setSize(PICKER_DIMENSIONS.width - 2,
+            PICKER_DIMENSIONS.height - 2)
         .build();
 
     picker.setVisible(true);
   } else {
-    showError('Unable to load the file picker. Please try again.');
+    var error = getDisplayObject('alert-error',
+            'Unable to load the file picker. Please try again.');
+    updateDisplay(error);
   }
 }
 
@@ -98,7 +100,7 @@ function createSpreadsheetPicker(token) {
 function spreadsheetPickerCallback(data) {
   if (data.action == google.picker.Action.PICKED) {
     google.script.run
-        .withSuccessHandler(showSuccess)
+        .withSuccessHandler(updateDisplay)
         .loadSpreadsheetFile(data.docs);
   } else if (data.action == google.picker.Action.CANCEL) {
     google.script.host.close();

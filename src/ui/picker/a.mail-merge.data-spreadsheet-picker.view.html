@@ -2,18 +2,25 @@
 <html>
 <head>
   <base target="_top">
-  <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+  <?!= include('lib.google-styles.css'); ?>
+  <?!= include('lib.font-awesome.css'); ?>
+  <?!= include('lib.display.styles.css'); ?>
   <style>
     <?!= include('a.mail-merge.styles.css'); ?>
   </style>
 </head>
 <body>
   <div id="contents">
-    <div id="success" class="hidden"></div>
-    <div id="error" class="hidden"></div>
-    <div id="display"></div>
+    <div id="loading" class="loading hidden">
+      <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>
+      <span>Loading...</span>
+    </div>
+    <div id="loading-overlay" class="loading-overlay hidden"></div>
+    <div id="alert"></div>
+    <div id="content"></div>
   </div>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <?!= include('lib.jquery.client.js'); ?>
+  <?!= include('lib.display.client.js'); ?>
   <script>
     <?!= include('a.mail-merge.display.controller.client.js'); ?>
     <?!= include('a.mail-merge.picker.controller.client.js'); ?>

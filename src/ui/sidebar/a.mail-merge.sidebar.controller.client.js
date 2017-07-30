@@ -17,7 +17,7 @@
  * Sidebar initialization and user-response functions.
  */
 $(function() {
-  initializeSidebar();
+  initialize();
 
   // Handle changes to the sheet selector by replacing the data selector.
   $(document).on('change', '#sheetSelector', function() {
@@ -33,17 +33,39 @@ $(function() {
         .updateSelectedSheet(sheet);
     }
   });
+
+  // Handle clicks to the data selector.
+  var dataOptionSelector = '#headerSelectDisplay li';
+  $(document).on('click', dataOptionSelector, function() {
+    var data = $(this).html();
+    google.script.run
+        .withSuccessHandler()
+        .insertVariable(data);
+  });
 });
 
 
 /**
  * Runs sidebar initialization functions to retrieve and display stored data.
  */
-function initializeSidebar() {
+function initialize() {
   // Display the data spreadsheet and file selector button.
   google.script.run
-    .withSuccessHandler(updateDisplay)
+    .withSuccessHandler(showSidebarDisplay)
     .getSidebarDisplay();
+}
+
+
+/**
+ * Updates the sidebar display with an array of display objects containing
+ * the add-on's primary user interface.
+ * 
+ * @param {displayObjects[]} displayObjects An array of display objects.
+ */
+function showSidebarDisplay(displayObjects) {
+  displayObjects.forEach(function(display) {
+    updateDisplay(display);
+  });
 }
 
 

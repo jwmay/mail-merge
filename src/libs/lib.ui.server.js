@@ -14,20 +14,6 @@
 
 
 /**
- * Insert any HTML file in the project into an outer HTML file.
- * Called from within the outer HTML file.
- * 
- * @param {String} filename Name of the file in the project.
- *    Do not include ".html".
- * @return {String} HTML markup for the requested file.
- */
-function include(filename) {
-  return HtmlService.createHtmlOutputFromFile(filename)
-      .getContent();
-}
-
-
-/**
  * Open a dialog window using an HTML template with the given dimensions.
  * 
  * @param {string} source Name of the HTML template file.
@@ -87,6 +73,18 @@ function showPrompt(message) {
 function showAlert(title, message) {
   var ui = DocumentApp.getUi();
   var response = ui.alert(title, message, ui.ButtonSet.OK);
+}
+
+
+/**
+ * Returns an HTML-formatted string to display a 'Close' button.
+ * 
+ * @returns {string} An HTML-formatted string.
+ */
+function closeButton() {
+  button = '<div><input type="button" value="Close" class="btn" '+
+          'onclick="google.script.host.close();"></div>';
+  return button;
 }
 
 

@@ -15,10 +15,13 @@
 
 /**
  * Process the selected file from the Google Picker API. Perform mime-type
- * validation and store the id of the selected file.
+ * validation and store the id of the selected file. If an invalid mime-type
+ * is selected, a display object containing an error message is returned.
  * 
  * @param {array} files An array of JSON objects returned by Google Picker
- *     representing the selected file.
+ *        representing the selected file.
+ * @return {displayObject} A display object containing the success message, or
+ *        error message if the incorrect mime-type was selected.
  */
 function loadSpreadsheetFile(files) {
   // Clear all stored document properties before loading new file.
@@ -29,9 +32,15 @@ function loadSpreadsheetFile(files) {
   if (file.mimeType === MimeType.GOOGLE_SHEETS) {
     var dataSpreadsheet = new DataSpreadsheet();
     dataSpreadsheet.setId(file.id);
-    var success_message = 'Spreadsheet file successfully updated.';
+    
     // Refresh the sidebar to display the newly-selected file.
     onShowSidebar();
-    return success_message;
+    var success = getDisplayObject('alert-success',
+            'Spreadsheet file successfully updated.', '', 'top', false, true);
+    return success;
+  } else {
+    var error = getDisplayObject('alert-error',
+            'An invalid file type was given. Only Google Sheets are allowed.');
+    return error;
   }
 }

@@ -1,6 +1,6 @@
 /**
- * Base styles
- */
+* Base styles
+*/
 body {
   font-size: 15px;
   line-height: 21px;
@@ -33,137 +33,8 @@ code {
 
 
 /**
- * Alert styles
- */
-.alert {
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
-.alert-success {
-  background-color: #dff0d8;
-  border: 1px solid #d6e9c6;
-  color: #3c763d;
-}
-
-.alert-warning {
-  background-color: #fcf8e3;
-  border: 1px solid #faebcc;
-  color: #8a6d3b;
-}
-
-.alert-error {
-  background-color: #f2dede;
-  border: 1px solid #ebccd1;
-  color: #a94442;
-}
-
-.alert-information {
-  background-color: #eee;
-}
-
-.alert-header {
-  margin: 2px 0;
-  color: inherit;
-}
-
-
-/**
- * Card styles
- */
-.card {
-  padding: 24px 10px;
-  border-top: 1px solid #ddd;
-  position: relative;
-}
-
-.card:last-of-type {
-  border-bottom: 1px solid #ddd;
-}
-
-.card h4 {
-  margin: 0;
-  margin-bottom: 6px;
-}
-
-.file {
-  padding: 10px;
-  background-color: #eee;
-  margin: 6px 0;
-  font-size: 13px;
-  line-height: 18px;
-}
-
-.file i {
-  margin-right: 4px;
-}
-
-.card .btn-bar > input {
-  margin: 0;
-  margin-top: 6px;
-  margin-left: 10px;
-}
-
-.card .btn-bar > input:first-of-type {
-  margin-left: 0;
-}
-
-
-/**
- * Loading message styles and animation
- */
-.loading {
-  color: #696969;
-  font-style: italic;
-  z-index: 200;
-  position: absolute;
-  top: 90px;
-  left: 80px;
-}
-
-.loading i {
-  animation: spinner 2s infinite linear;
-  vertical-align: middle;
-}
-
-.loading span {
-  position: relative;
-  top: 3px;
-}
-
-.loading-overlay {
-  content: " ";
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  z-index: 100;
-  top: 0;
-  left: 0;
-  background-color: white;
-  opacity: 0.85;
-}
-
-@keyframes spinner {
-  0% {
-    color: #26A0F5;
-    transform: rotate(0deg);
-  }
-  25% {
-    color: #4CAA50;
-  }
-  75% {
-    color: #26A0F5;
-  }
-  100% {
-    color: #26A0F5;
-    transform: rotate(359deg);
-  }
-}
-
-
-/**
- * Form styles
- */
+* Form styles
+*/
 .form-options {
   background-color: #eee;
   padding: 20px;
@@ -184,10 +55,22 @@ code {
   margin: 10px;
 }
 
+.file {
+  padding: 10px;
+  background-color: #eee;
+  margin: 6px 0;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.file i {
+  margin-right: 4px;
+}
+
 
 /**
- * Selector styles
- */
+* Selector styles
+*/
 .selector {
   border: 1px solid #ccc;
   max-height: 200px;
@@ -209,20 +92,4 @@ code {
 
 .selector ul li:hover {
   background-color: #eee;
-}
-
-
-/**
- * Formatting utilities
- */
-.hidden {
-  display: none !important;
-}
-
-.mb-0 {
-  margin-bottom: 0;
-}
-
-.border-0 {
-  border: none;
 }
