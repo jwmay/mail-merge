@@ -35,9 +35,9 @@ function getSidebarDisplay() {
     displayObjects.push(getSheetSelectDisplay());
   }
 
-  // Get the data selector only if a sheet is selected.
+  // Get the merge field selector only if a sheet is selected.
   if (sheet !== null) {
-    displayObjects.push(getHeaderSelectDisplay());
+    displayObjects.push(getMergeFieldDisplay());
   }
   return displayObjects;
 }
@@ -51,7 +51,7 @@ function getSidebarDisplay() {
 function updateSelectedSheet(name) {
   var spreadsheet = new DataSpreadsheet();
   spreadsheet.setSheetName(name);
-  var display = getHeaderSelectDisplay();
+  var display = getMergeFieldDisplay();
   return display;
 }
 
@@ -81,7 +81,8 @@ function getSpreadsheetDisplay() {
         '<span id="dataSpreadsheet">' + linkDisplay + '</span>' +
       '</div>' +
       '<div class="btn-bar">' +
-        '<input type="button" value="Select file" onclick="selectSpreadsheet_onclick();">' +
+        '<input type="button" value="Select file" ' +
+          'onclick="selectSpreadsheet_onclick();">' +
       '</div>';
   var display = getDisplayObject('card', content, 'spreadsheetDisplay');
   return display;
@@ -109,18 +110,18 @@ function getSheetSelectDisplay() {
 
 
 /**
- * Returns a display object containing the data selector. If no headers are
- * found in the selected sheet, an error display object is returned.
+ * Returns a display object containing the merge field selector. If no headers
+ * are found in the selected sheet, an error display object is returned.
  * 
- * @return {displayObject} A display object for the data selector.
+ * @return {displayObject} A display object for the merge field selector.
  */
-function getHeaderSelectDisplay() {
+function getMergeFieldDisplay() {
   var spreadsheet = new DataSpreadsheet();
   var sheetName = spreadsheet.getSheetName();
   var headers = spreadsheet.getSheetHeader(sheetName);
 
   if (headers !== null) {
-    // Construct the list items.
+    // Construct the list of merge field items.
     var list = [];
     for (var i = 0; i < headers.length; i++) {
       var header = headers[i];
@@ -129,14 +130,23 @@ function getHeaderSelectDisplay() {
     }
     var listDisplay = list.join('\n');
     
-    // Construct the HTML display.
-    var content = '<h4>Select data</h4>' +
+    // Construct the merge field display.
+    var content = '<h4>Insert merge field</h4>' +
         '<div class="selector">' +
           '<ul>' +
             listDisplay +
           '</ul>' +
         '</div>';
-    var display = getDisplayObject('card', content, 'headerSelectDisplay');
+
+    // Construct the rules selector display.
+    content += '<h4>Rules</h4>' +
+        '<div class="selector">' +
+          '<ul>' +
+            '<li>Next record</li>' +
+          '</ul>' +
+        '</div>';
+
+    var display = getDisplayObject('card', content, 'mergeFieldSelectDisplay');
     return display;
   } else {
     var errorContent = 'No headers found in the selected sheet.';

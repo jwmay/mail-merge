@@ -15,6 +15,15 @@ h1 {
   margin: 20px 0 0 0;
 }
 
+ h4 {
+  margin-top: 21px;
+  margin-bottom: 7px;
+}
+
+h4:first-of-type {
+  margin-top: 0px;
+}
+
 p {
   margin: 4px 0;
 }

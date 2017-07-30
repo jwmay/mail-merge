@@ -70,11 +70,6 @@
     border-bottom: 1px solid #ddd;
   }
 
-  .card h4 {
-    margin: 0;
-    margin-bottom: 6px;
-  }
-
   .card .btn-bar > input {
     margin: 0;
     margin-top: 6px;

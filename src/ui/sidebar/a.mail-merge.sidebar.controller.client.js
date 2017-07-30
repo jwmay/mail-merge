@@ -19,11 +19,11 @@
 $(function() {
   initialize();
 
-  // Handle changes to the sheet selector by replacing the data selector.
+  // Handle changes to the sheet selector by replacing the merge field selector.
   $(document).on('change', '#sheetSelector', function() {
-    // Remove the data selector display before replacement and the default
-    // option in the sheet selector.
-    $('#headerSelectDisplay').remove();
+    // Remove the merge field selector display before replacement and the
+    // default option in the sheet selector.
+    $('#mergeFieldSelectDisplay').remove();
     $('#sheetSelector option.default').remove();
     
     var sheet = $(this).val();
@@ -34,8 +34,8 @@ $(function() {
     }
   });
 
-  // Handle clicks to the data selector.
-  var dataOptionSelector = '#headerSelectDisplay li';
+  // Handle clicks to the merge field selector.
+  var dataOptionSelector = '#mergeFieldSelectDisplay li';
   $(document).on('click', dataOptionSelector, function() {
     var data = $(this).html();
     google.script.run
