@@ -39,8 +39,9 @@ $(function() {
   $(document).on('click', dataOptionSelector, function() {
     var data = $(this).html();
     google.script.run
-        .withSuccessHandler()
+        .withSuccessHandler(updateDisplay)
         .insertVariable(data);
+    google.script.host.editor.focus();
   });
 });
 
@@ -51,21 +52,8 @@ $(function() {
 function initialize() {
   // Display the data spreadsheet and file selector button.
   google.script.run
-    .withSuccessHandler(showSidebarDisplay)
+    .withSuccessHandler(updateDisplay)
     .getSidebarDisplay();
-}
-
-
-/**
- * Updates the sidebar display with an array of display objects containing
- * the add-on's primary user interface.
- * 
- * @param {displayObjects[]} displayObjects An array of display objects.
- */
-function showSidebarDisplay(displayObjects) {
-  displayObjects.forEach(function(display) {
-    updateDisplay(display);
-  });
 }
 
 

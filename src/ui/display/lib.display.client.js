@@ -1,22 +1,30 @@
 <script>
   /**
-  * Helper function for updating the user-interface display.
-  * 
-  * This function is needed in google.script.run calls where the output
-  * of a server call must be a displayObject that is passed into the
-  * withSuccessHandler() function.
-  *
-  * Example: google.script.run.withSuccessHandler(updateDisplay).serverCall()
-  *
-  * @param {object} displayObject A displayObject defining the
-  *         display parameters.
-  */
+   * Helper function for updating the user-interface with a single display
+   * or an array of displays.
+   * 
+   * This function is needed in google.script.run calls where the output
+   * of a server call must be a displayObject that is passed into the
+   * withSuccessHandler() method.
+   *
+   * Example: google.script.run.withSuccessHandler(updateDisplay).serverCall();
+   *
+   * @param {object|Array} displayObject A displayObject or an array of displayObjects
+   *         defining the display parameters.
+   */
   function updateDisplay(displayObject) {
     var display = new Display();
-    display.updateDisplay(displayObject);
-  
+    
+    if (Array.isArray(displayObject) === true) {
+      displayObject.forEach(function(object) {
+        display.updateDisplay(object);
+      });
+    } else {
+      display.updateDisplay(displayObject);
+    }
+    
     // Hide the loading overlay in case it was displayed during a server call.
-    display.hideLoading();
+    hideLoading();
   }
 
 
