@@ -177,7 +177,8 @@ function getMergeFieldDisplay() {
  * @return {displayObject} A display object for the run merge button.
  */
 function getRunMergeDisplay() {
-  var content = '<input type="button" class="btn action" value="Run merge">';
+  var content = '<input type="button" class="btn action" value="Run merge" ' +
+          'id="runMerge">';
   var dislpay = getDisplayObject('card', content, 'runMergeDisplay');
   return dislpay;
 }

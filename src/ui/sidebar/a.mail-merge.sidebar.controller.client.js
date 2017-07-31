@@ -21,7 +21,12 @@ $(function() {
 
   // Handle the select spreadsheet file button click.
   $(document).on('click', '#selectSpreadsheet', function() {
-    selectSpreadsheet();
+    selectSpreadsheet_onClick();
+  });
+
+  // Handle the run merge button click.
+  $(document).on('click', '#runMerge', function() {
+    runMerge_onClick();
   });
 
   // Update the merge field selector when the sheet selector changes.
@@ -66,15 +71,26 @@ function initialize() {
 
 
 /**
- * Handle the 'Select File' button click response. This handles the process of
+ * Handle the 'Select file' button click response. This handles the process of
  * allowing the user to select a data spreadsheet file, storing the file's id, 
  * and updating the sidebar display with the file's name and a link to the file.
  */
-function selectSpreadsheet() {
+function selectSpreadsheet_onClick() {
   showLoading();
   google.script.run
     .withSuccessHandler(hideLoading)
     .showSpreadsheetPicker();
+}
+
+
+/**
+ * Handle the 'Run merge' button click response.
+ */
+function runMerge_onClick() {
+  showLoading();
+  google.script.run
+    .withSuccessHandler(updateDisplay)
+    .runMerge();
 }
 
 
