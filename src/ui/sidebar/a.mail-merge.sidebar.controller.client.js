@@ -19,11 +19,19 @@
 $(function() {
   initialize();
 
+  // Handle the select spreadsheet file button click.
+  $(document).on('click', '#selectSpreadsheet', function() {
+    selectSpreadsheet();
+  });
+
   // Update the merge field selector when the sheet selector changes.
   $(document).on('change', '#sheetSelector', function() {
-    // Remove the merge field selector display before replacement and the
-    // default option in the sheet selector.
+    // Remove the merge field selector display, the run merge display, and any
+    // alerts before replacement. Remove the default option in the sheet
+    // selector.
+    clearDisplay('alerts');
     $('#mergeFieldSelectDisplay').remove();
+    $('#runMergeDisplay').remove();
     $('#sheetSelector option.default').remove();
     
     var sheet = $(this).val();
@@ -39,15 +47,15 @@ $(function() {
   $(document).on('click', dataOptionSelector, function() {
     var data = $(this).html();
     google.script.run
-        .withSuccessHandler(updateDisplay)
+        .withSuccessHandler(insertMergeFieldCallback)
         .insertVariable(data);
-    google.script.host.editor.focus();
   });
 });
 
 
 /**
- * Runs sidebar initialization functions to retrieve and display stored data.
+ * Runs sidebar initialization functions to retrieve and display the primary
+ * UI components based on selected and stored data.
  */
 function initialize() {
   // Display the data spreadsheet and file selector button.
@@ -62,9 +70,23 @@ function initialize() {
  * allowing the user to select a data spreadsheet file, storing the file's id, 
  * and updating the sidebar display with the file's name and a link to the file.
  */
-function selectSpreadsheet_onclick() {
+function selectSpreadsheet() {
   showLoading();
   google.script.run
     .withSuccessHandler(hideLoading)
     .showSpreadsheetPicker();
+}
+
+
+/**
+ * Handle the callback after a merge field has been inserted into the document
+ * by displaying an error message if the insert failed.
+ * 
+ * @param {object} display A display object containing an error message,
+ *        otherwise, null if the insert was successful.
+ */
+function insertMergeFieldCallback(display) {
+  if (display !== undefined) {
+    updateDisplay(display);
+  }
 }

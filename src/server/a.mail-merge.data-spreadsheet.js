@@ -134,27 +134,29 @@ DataSpreadsheet.prototype.getSheetNames = function() {
 
 
 /**
- * Returns an array of header values for the given sheet name. If the sheet has
- * no data or there is no header, returns null.
+ * Returns an array of header values for the selected sheet. If there is no
+ * selected sheet, the sheet has no data, or there is no header, returns null.
  * 
- * @param {string} name The sheet name.
  * @return {array} The header names as strings, or null if there is no header.
  */
-DataSpreadsheet.prototype.getSheetHeader = function(name) {
+DataSpreadsheet.prototype.getSheetHeader = function() {
+  // Return null if there is no selected spreadsheet.
   var spreadsheet = this.getSpreadsheet();
   if (spreadsheet === null) return null;
-  var sheet = spreadsheet.getSheetByName(name);
+
+  // Return null if there is no selected sheet.
+  var sheetName = this.getSheetName();
+  if (sheetName === null) return null;
+  var sheet = spreadsheet.getSheetByName(sheetName);
   
-  // Return null if there is no data in the sheet.
+  // Return null if there is no data in the sheet, otherwise, get the header.
   var maxCols = sheet.getLastColumn();
   if (maxCols === 0) return null;
-  
   var range = sheet.getRange(1, 1, 1, maxCols);
   var header = range.getValues()[0];
 
   // Return null if there are no headers.
   header = header.removeEmpty();
   if (header.length < 1) return null;
-
   return header;
 };

@@ -24,6 +24,7 @@ function getSidebarDisplay() {
   var spreadsheet = new DataSpreadsheet();
   var sheetNames = spreadsheet.getSheetNames();
   var sheet = spreadsheet.getSheetName();
+  var headers = spreadsheet.getSheetHeader();
 
   // Construct the individual displayObjects for each component
   // of the sidebar display and store them in an array.
@@ -39,20 +40,36 @@ function getSidebarDisplay() {
   if (sheet !== null) {
     displayObjects.push(getMergeFieldDisplay());
   }
+
+  // Get the merge button display only if merge fields are displayed.
+  if (headers !== null) {
+    displayObjects.push(getRunMergeDisplay());
+  }
   return displayObjects;
 }
 
 
 /**
- * Stores the selected sheet name and returns the header select display.
+ * Stores the selected sheet name and returns the header select display and
+ * run merge display if the sheet has headers, otherwise, displays an error.
  * 
  * @param {string} name The sheet name.
  */
 function updateSelectedSheet(name) {
   var spreadsheet = new DataSpreadsheet();
   spreadsheet.setSheetName(name);
-  var display = getMergeFieldDisplay();
-  return display;
+
+  // Get the merge field selector, or error display if there are
+  // no headers in selected sheet.
+  var displayObjects = [];
+  displayObjects.push(getMergeFieldDisplay());
+
+  // Get the run merge display only if there are headers in the selected sheet.
+  var headers = spreadsheet.getSheetHeader();
+  if (headers !== null) {
+    displayObjects.push(getRunMergeDisplay());
+  }
+  return displayObjects;
 }
 
 
@@ -81,8 +98,7 @@ function getSpreadsheetDisplay() {
         '<span id="dataSpreadsheet">' + linkDisplay + '</span>' +
       '</div>' +
       '<div class="btn-bar">' +
-        '<input type="button" value="Select file" ' +
-          'onclick="selectSpreadsheet_onclick();">' +
+        '<input type="button" value="Select file" id="selectSpreadsheet">' +
       '</div>';
   var display = getDisplayObject('card', content, 'spreadsheetDisplay');
   return display;
@@ -117,8 +133,7 @@ function getSheetSelectDisplay() {
  */
 function getMergeFieldDisplay() {
   var spreadsheet = new DataSpreadsheet();
-  var sheetName = spreadsheet.getSheetName();
-  var headers = spreadsheet.getSheetHeader(sheetName);
+  var headers = spreadsheet.getSheetHeader();
 
   if (headers !== null) {
     // Construct the list of merge field items.
@@ -153,6 +168,18 @@ function getMergeFieldDisplay() {
     var errorDisplay = getDisplayObject('alert-error', errorContent);
     return errorDisplay;
   }
+}
+
+
+/**
+ * Returns a display object containing the run merge button.
+ * 
+ * @return {displayObject} A display object for the run merge button.
+ */
+function getRunMergeDisplay() {
+  var content = '<input type="button" class="btn action" value="Run merge">';
+  var dislpay = getDisplayObject('card', content, 'runMergeDisplay');
+  return dislpay;
 }
 
 

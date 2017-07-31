@@ -42,12 +42,12 @@ var getDisplayObject = function(type, content, id, position, reset, close) {
 
 
 /**
- * Returns the content of the given file to be displayed in an HTML template.
+ * Returns the content of the filename to be displayed in an HTML template.
  *
- * @param {string} file The file name to include.
+ * @param {string} filename The file name to include.
  * @return {string} The file content.
  */
-function include(file) {
-  var content = HtmlService.createHtmlOutputFromFile(file).getContent();
+function include(filename) {
+  var content = HtmlService.createHtmlOutputFromFile(filename).getContent();
   return content;
 }
