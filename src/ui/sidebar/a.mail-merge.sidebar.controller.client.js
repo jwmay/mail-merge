@@ -19,7 +19,7 @@
 $(function() {
   initialize();
 
-  // Handle changes to the sheet selector by replacing the merge field selector.
+  // Update the merge field selector when the sheet selector changes.
   $(document).on('change', '#sheetSelector', function() {
     // Remove the merge field selector display before replacement and the
     // default option in the sheet selector.
@@ -34,7 +34,7 @@ $(function() {
     }
   });
 
-  // Handle clicks to the merge field selector.
+  // Handle clicks to the merge field and rules selectors.
   var dataOptionSelector = '#mergeFieldSelectDisplay li';
   $(document).on('click', dataOptionSelector, function() {
     var data = $(this).html();

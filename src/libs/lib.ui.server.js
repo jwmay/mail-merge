@@ -114,8 +114,10 @@ function makeSelect(options, message, value, id, classes) {
   select.push(Utilities.formatString('<select id="%s" class="%s">',
           id, classes));
 
-  // Construct the default option.
-  select.push('<option value="" class="default">' + message + '</option>');
+  // Construct the default option if there is no assigned value.
+  if (value === '' || value === null || value === undefined) {
+    select.push('<option value="" class="default">' + message + '</option>');
+  }
 
   // Construct the options.
   for (i = 0; i < options.length; i++) {
