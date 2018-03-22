@@ -70,6 +70,5 @@ function onClearDocumentProperties() {
 
 
 function onFeatureTest() {
-  var dataSpreadsheet = new DataSpreadsheet();
-  dataSpreadsheet.getSheetHeader('Students');
+  // do something
 }

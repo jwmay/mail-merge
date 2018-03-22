@@ -47,13 +47,13 @@ $(function() {
     }
   });
 
-  // Handle clicks to the merge field and rules selectors.
+  // Handle clicks to the insert merge field and rules selectors.
   var dataOptionSelector = '#mergeFieldSelectDisplay li';
   $(document).on('click', dataOptionSelector, function() {
     var data = $(this).html();
     google.script.run
         .withSuccessHandler(insertMergeFieldCallback)
-        .insertVariable(data);
+        .insertMergeField(data);
   });
 });
 

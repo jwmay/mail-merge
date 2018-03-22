@@ -85,10 +85,10 @@ DataSpreadsheet.prototype.getSpreadsheet = function() {
 
 
 /**
- * Returns the name of the data spreadsheet, or null if no spreadsheet
+ * Returns the title of the data spreadsheet, or null if no spreadsheet
  * id is stored.
  * 
- * @return {string} The spreadsheet name, or null if no spreadsheet
+ * @return {string} The spreadsheet title, or null if no spreadsheet
  *        id is stored.
  */
 DataSpreadsheet.prototype.getName = function() {
