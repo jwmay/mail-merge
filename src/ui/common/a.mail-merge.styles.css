@@ -60,10 +60,6 @@ code {
   background-color: rgba(255, 0, 0, 0.35);
 }
 
-.btn-bar > input {
-  margin: 10px;
-}
-
 .file {
   padding: 10px;
   background-color: #eee;
