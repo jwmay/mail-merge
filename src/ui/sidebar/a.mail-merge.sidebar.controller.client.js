@@ -29,6 +29,11 @@ $(function() {
     runMerge_onClick();
   });
 
+  // Handle the merge options button click.
+  $(document).on('click', '#mergeOptions', function() {
+    mergeOptions_onClick();
+  });
+
   // Update the merge field selector when the sheet selector changes.
   $(document).on('change', '#sheetSelector', function() {
     // Remove the merge field selector display, the run merge display, and any
@@ -47,7 +52,7 @@ $(function() {
     }
   });
 
-  // Handle clicks to the insert merge field and rules selectors.
+  // Handle clicks to the insert merge field selector.
   var dataOptionSelector = '#mergeFieldSelectDisplay li';
   $(document).on('click', dataOptionSelector, function() {
     var data = $(this).html();
@@ -91,6 +96,15 @@ function runMerge_onClick() {
   google.script.run
     .withSuccessHandler(updateDisplay)
     .runMerge();
+}
+
+
+/**
+ * Handle the 'Merge options' button click response.
+ */
+function mergeOptions_onClick() {
+  google.script.run
+      .showMergeOptions();
 }
 
 

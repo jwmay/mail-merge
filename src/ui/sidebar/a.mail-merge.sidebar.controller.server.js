@@ -153,13 +153,16 @@ function getMergeFieldDisplay() {
           '</ul>' +
         '</div>';
 
+    //// REMOVE: Not needed as the ability to control flow will be based on
+    //// merge options where the user can specify a choice between placing each
+    //// record on a new page (for letters) or on the same page (for labels)
     // Construct the rules selector display.
-    content += '<h4>Rules</h4>' +
-        '<div class="selector">' +
-          '<ul>' +
-            '<li>Next record</li>' +
-          '</ul>' +
-        '</div>';
+    // content += '<h4>Rules</h4>' +
+    //     '<div class="selector">' +
+    //       '<ul>' +
+    //         '<li>Next record</li>' +
+    //       '</ul>' +
+    //     '</div>';
 
     var display = getDisplayObject('card', content, 'mergeFieldSelectDisplay');
     return display;
@@ -177,10 +180,24 @@ function getMergeFieldDisplay() {
  * @return {displayObject} A display object for the run merge button.
  */
 function getRunMergeDisplay() {
-  var content = '<input type="button" class="btn action" value="Run merge" ' +
-          'id="runMerge">';
+  var content = '<h4>Merge</h4>' +
+          '<div class="btn-bar">' +
+            '<input type="button" class="btn action" value="Run merge" ' +
+              'id="runMerge">' +
+            '<input type="button" class="btn" value="Merge options" ' +
+              'id="mergeOptions">' +
+          '</div>';
   var dislpay = getDisplayObject('card', content, 'runMergeDisplay');
   return dislpay;
+}
+
+
+/**
+ * Displays an HTML Service dialog in Google Sheets that contains client-side
+ * JavaScript code for the merge options.
+ */
+function showMergeOptions() {
+  showDialog('a.mail-merge.merge-options.view', 400, 550, 'Merge options');
 }
 
 
