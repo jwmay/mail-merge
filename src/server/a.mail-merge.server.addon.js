@@ -39,6 +39,8 @@ function onOpen(e) {
       .createMenu('Simply Mail Merge')
       .addItem('Start', 'onShowSidebar');
   
+  // If debug, display menu options for testing and to clear the
+  // property storage.
   if (config.debug) {
     ui.addSeparator()
         .addItem('Clear document properties', 'onClearDocumentProperties')
@@ -59,7 +61,7 @@ function onShowSidebar() {
 
 
 /**
- * Clears the document properties storage and refreshes the sidebar. this
+ * Clears the document properties storage and refreshes the sidebar. This
  * function is only available in debug mode.
  */
 function onClearDocumentProperties() {
@@ -69,6 +71,10 @@ function onClearDocumentProperties() {
 }
 
 
+/**
+ * This function is used to call any assigned function from the user-interface
+ * for testing purposes. This function is only available in debug mode.
+ */
 function onFeatureTest() {
   // do something
 }
