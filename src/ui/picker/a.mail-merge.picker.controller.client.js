@@ -65,6 +65,12 @@ function createSpreadsheetPicker(token) {
         .addView(new google.picker.DocsView()
             .setIncludeFolders(true)
             .setOwnedByMe(true))
+
+        // Allow user to select files from their Team Drives.
+        .enableFeature(google.picker.Feature.SUPPORT_TEAM_DRIVES)
+        .addView(new google.picker.DocsView()
+            .setEnableTeamDrives(true)
+            .setIncludeFolders(true))
         
         // Hide title bar since an Apps Script dialog already has a title.
         .hideTitleBar()
@@ -73,7 +79,7 @@ function createSpreadsheetPicker(token) {
         .setCallback(spreadsheetPickerCallback)
         .setOrigin(google.script.host.origin)
         
-        // Instruct Picker to fill the dialog, minus 2 px for the border.
+        // Instruct Picker to fill the dialog, minus 2px for the border.
         .setSize(PICKER_DIMENSIONS.width - 2,
             PICKER_DIMENSIONS.height - 2)
         .build();
