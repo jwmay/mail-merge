@@ -19,8 +19,8 @@
  * @return {object} A displayObject containing the results of the merge.
  */
 function runMerge() {
-  var merger = new Merger();
-  var results = merger.runMerge();
+  var merge = new Merge();
+  var results = merge.runMerge();
   return results;
 }
 
@@ -28,7 +28,7 @@ function runMerge() {
 /**
  * Base class.
  */
-var Merger = function() {
+var Merge = function() {
   this.spreadsheet = new DataSpreadsheet();
   this.template = new TemplateDocument();
   this.output = {};
@@ -40,10 +40,9 @@ var Merger = function() {
  * 
  * @return {object} A displayObject containing the results of the merge.
  */
-Merger.prototype.runMerge = function() {
-  // this.output = this.getOutputDocument();
-  this.output = new OutputDocument('1LZDeMmFyTn-tqcx9rAy-cGydQpfZt83GyKeuYP1Pglg');  // for testing only
-  var nextRecordCount = this.output.getNextRecordCount();
+Merge.prototype.runMerge = function() {
+  this.output = this.getOutputDocument();
+  // this.output = new OutputDocument('1LZDeMmFyTn-tqcx9rAy-cGydQpfZt83GyKeuYP1Pglg');  // for testing only
 
   // Return a success message.
   var results = getDisplayObject('alert-success', 'Merge done!');
@@ -54,7 +53,7 @@ Merger.prototype.runMerge = function() {
 /**
  * 
  */
-Merger.prototype.getOutputDocument = function() {
+Merge.prototype.getOutputDocument = function() {
   var outputFileName = '[Merge Output] ' + this.template.getName();
   var outputFileId = this.template.makeCopy(outputFileName);
   var outputFile = new OutputDocument(outputFileId);
