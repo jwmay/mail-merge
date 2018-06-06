@@ -20,6 +20,8 @@
  * @constructor
  */
 var DataSpreadsheet = function() {
+  this._data_spreadsheet_id_key = 'DATA_SPREADSHEET_ID';
+  this._data_sheet_name_key = 'DATA_SHEET_NAME';
   this.storage = new PropertyStore();
 };
 
@@ -30,7 +32,7 @@ var DataSpreadsheet = function() {
  * @return {string} The spreadsheet id.
  */
 DataSpreadsheet.prototype.getId = function() {
-  var id = this.storage.getProperty('DATA_SPREADSHEET_ID');
+  var id = this.storage.getProperty(this._data_spreadsheet_id_key);
   return id;
 };
 
@@ -41,7 +43,7 @@ DataSpreadsheet.prototype.getId = function() {
  * @param {string} id The spreadsheet id.
  */
 DataSpreadsheet.prototype.setId = function(id) {
-  this.storage.setProperty('DATA_SPREADSHEET_ID', id);
+  this.storage.setProperty(this._data_spreadsheet_id_key, id);
 };
 
 
@@ -51,7 +53,7 @@ DataSpreadsheet.prototype.setId = function(id) {
  * @return {string} The sheet name.
  */
 DataSpreadsheet.prototype.getSheetName = function() {
-  var name = this.storage.getProperty('DATA_SHEET_NAME');
+  var name = this.storage.getProperty(this._data_sheet_name_key);
   return name;
 };
 
@@ -62,7 +64,7 @@ DataSpreadsheet.prototype.getSheetName = function() {
  * @param {string} name The sheet name.
  */
 DataSpreadsheet.prototype.setSheetName = function(name) {
-  this.storage.setProperty('DATA_SHEET_NAME', name);
+  this.storage.setProperty(this._data_sheet_name_key, name);
 };
 
 
