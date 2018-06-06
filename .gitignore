@@ -17,3 +17,7 @@ node_modules
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# editor generated files and dirs #
+###################################
+.vscode
