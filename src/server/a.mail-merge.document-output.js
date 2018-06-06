@@ -30,21 +30,7 @@ OutputDocument.prototype.getDocument = function() {
 };
 
 
-/**
- * 
- */
-OutputDocument.prototype.getId = function() {
-  return this.id;
-};
-
-
-/**
- * 
- */
-OutputDocument.prototype.getNextRecordCount = function() {
-  var nextRecordKey = '<<Next record>>';
-  var nextRecordRegex = new RegExp(nextRecordKey, 'g');
-  var bodyText = this.getDocument().getBody().getText();
-  var nextRecordCount = bodyText.match(nextRecordRegex).length;
-  return nextRecordCount;
+OutputDocument.prototype.createDocument = function(name) {
+  var document = DocumentApp.create(name);
+  return document;
 };

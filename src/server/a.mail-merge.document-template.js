@@ -102,7 +102,7 @@ TemplateDocument.prototype.insertMergeField = function(field) {
   var element = cursor.insertText(dataVariable);
   if (element !== null) {
     // Position the cursor at the end of the inserted merge field variable.
-    var elementEnd = field.length + 4;
+    var elementEnd = field.length + 4; // the 4 accounts for the '<<' and '>>'
     var position = document.newPosition(element, elementEnd);
     document.setCursor(position);
     return null;
