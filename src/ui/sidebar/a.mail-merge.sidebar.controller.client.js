@@ -93,6 +93,7 @@ function selectSpreadsheet_onClick() {
  */
 function runMerge_onClick() {
   showLoading();
+  clearDisplay('alerts');
   google.script.run
     .withSuccessHandler(updateDisplay)
     .runMerge();
