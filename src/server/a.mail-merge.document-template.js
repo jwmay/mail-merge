@@ -35,9 +35,21 @@ var TemplateDocument = function() {};
 
 
 /**
+ * Returns the formatted merge field.
+ * 
+ * @static
+ * @returns {string} The formatted merge field.
+ */
+TemplateDocument.getMergeField = function(field) {
+  var mergeField = '<<' + field + '>>';
+  return mergeField;
+};
+
+
+/**
  * Returns the template document as a Google Document object.
  * 
- * @return {Document} The template file as a Google Document object.
+ * @returns {Document} The template file as a Google Document object.
  */
 TemplateDocument.prototype.getDocument = function() {
   var document = DocumentApp.getActiveDocument();
@@ -48,7 +60,7 @@ TemplateDocument.prototype.getDocument = function() {
 /**
  * Returns the id of the template document.
  * 
- * @return {string} The id of the template document.
+ * @returns {string} The id of the template document.
  */
 TemplateDocument.prototype.getId = function() {
   var document = this.getDocument();
@@ -60,7 +72,7 @@ TemplateDocument.prototype.getId = function() {
 /**
  * Returns the title of the template document.
  * 
- * @return {string} The title of the template document.
+ * @returns {string} The title of the template document.
  */
 TemplateDocument.prototype.getName = function() {
   var document = this.getDocument();
@@ -75,7 +87,7 @@ TemplateDocument.prototype.getName = function() {
  * 
  * @param {string} outputName The filename that should be applied to
  *        the new copy.
- * @return {string} The id of the new copy.
+ * @returns {string} The id of the new copy.
  */
 TemplateDocument.prototype.makeCopy = function(outputName) {
   var id = this.getId();
@@ -92,13 +104,13 @@ TemplateDocument.prototype.makeCopy = function(outputName) {
  * containing the error message.
  * 
  * @param {string} field The merge field to insert.
- * @return {null|object} Returns null if the field was successfully inserted,
+ * @returns {null|object} Returns null if the field was successfully inserted,
  *        otherwise, returns a displayObject containing the error message.
  */
 TemplateDocument.prototype.insertMergeField = function(field) {
   var document = this.getDocument();
   var cursor = document.getCursor();
-  var dataVariable = '<<' + field + '>>';
+  var dataVariable = TemplateDocument.getMergeField(field);
   var element = cursor.insertText(dataVariable);
   if (element !== null) {
     // Position the cursor at the end of the inserted merge field variable.
@@ -111,4 +123,20 @@ TemplateDocument.prototype.insertMergeField = function(field) {
             'There was an error inserting the merge field.');
     return error;
   }
+};
+
+
+/**
+ * Returns a detached, deep copy of the template document body element.
+ * 
+ * Any child elements present in the element are also copied. The new element
+ * will not have a parent.
+ * 
+ * @returns {Body} Returns a copy of the document body.
+ */
+TemplateDocument.prototype.getBodyCopy = function() {
+  var document = this.getDocument();
+  var body = document.getBody();
+  var copy = body.copy();
+  return copy;
 };
