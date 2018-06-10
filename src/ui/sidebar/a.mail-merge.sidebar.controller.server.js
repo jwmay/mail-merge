@@ -92,7 +92,8 @@ function getSpreadsheetDisplay() {
   }
 
   // Construct the display object with filename and url.
-  var content = '<h4>Spreadsheet</h4>' +
+  var content = '' +
+      '<h4>Spreadsheet</h4>' +
       '<div class="file">' +
         '<i class="fa fa-file" aria-hidden="true"></i> ' +
         '<span id="dataSpreadsheet">' + linkDisplay + '</span>' +
@@ -116,7 +117,8 @@ function getSheetSelectDisplay() {
   var sheetNames = spreadsheet.getSheetNames();  
   var select = makeSelect(sheetNames, 'Select a sheet...', selected,
           'sheetSelector');
-  var content = '<h4>Sheet</h4>' +
+  var content = '' +
+      '<h4>Sheet</h4>' +
       '<div>' +
         select +
       '</div>';
@@ -146,7 +148,8 @@ function getMergeFieldDisplay() {
     var listDisplay = list.join('\n');
     
     // Construct the merge field display.
-    var content = '<h4>Insert merge field</h4>' +
+    var content = '' +
+        '<h4>Insert merge field</h4>' +
         '<div class="selector">' +
           '<ul>' +
             listDisplay +
@@ -180,13 +183,14 @@ function getMergeFieldDisplay() {
  * @return {displayObject} A display object for the run merge button.
  */
 function getRunMergeDisplay() {
-  var content = '<h4>Merge</h4>' +
-          '<div class="btn-bar">' +
-            '<input type="button" class="btn action" value="Run merge" ' +
-              'id="runMerge">' +
-            '<input type="button" class="btn" value="Merge options" ' +
-              'id="mergeOptions">' +
-          '</div>';
+  var content = '' +
+      '<h4>Merge</h4>' +
+      '<div class="btn-bar">' +
+        '<input type="button" class="btn action" value="Run merge" ' +
+          'id="runMerge">' +
+        '<input type="button" class="btn" value="Merge options" ' +
+          'id="mergeOptions">' +
+      '</div>';
   var dislpay = getDisplayObject('card', content, 'runMergeDisplay');
   return dislpay;
 }
