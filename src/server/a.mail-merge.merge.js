@@ -27,7 +27,10 @@ function runMerge() {
 
 
 /**
- * Base class.
+ * The Merge object performs the merge by using the data spreadsheet and
+ * template document and is responsible for creating the output document.
+ * 
+ * @constructor
  */
 var Merge = function() {
   this.spreadsheet = new DataSpreadsheet();
