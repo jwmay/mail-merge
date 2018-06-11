@@ -17,7 +17,12 @@
  * Base class for the output document that contains the output of the data
  * spreadsheet merged into the template file.
  * 
+ * The output document itself is created by the Merge class, which makes a copy
+ * of the template document and passes the id of that copied document to create
+ * and instance of the OutputDocument.
+ * 
  * @constructor
+ * @param {string} id The id of the output document.
  */
 var OutputDocument = function(id) {
   this.id = id;
@@ -64,12 +69,15 @@ OutputDocument.prototype.clearBody = function() {
  * Inserts a page break on the last page of the document add adds the given
  * content to the new page.
  * 
+ * The page parameter accepts an object consisting of flags indicating if the
+ * new page is the first or last page of the document. This removes an extra
+ * paragraph on the first page of the document and prevents the addition of a
+ * page break on the last page of the document.
+ * 
  * @param {array} content An array of Element objects added to the new page.
- * @param {boolean} last Flag to control output of a page break at the end of
- *        the new content. Do not add a page break if true, otherwise, add a
- *        page break to the end of the content.
+ * @param {object} page Flags to control formatting of output document.
  */
-OutputDocument.prototype.insertNewPage = function(content, first, last) {
+OutputDocument.prototype.insertNewPage = function(content, page) {
   var body = this.document.getBody();
   log(' *** START COPY TEMPLATE *** ');
   for (var i = 0; i < content.length; i++) {
@@ -86,11 +94,28 @@ OutputDocument.prototype.insertNewPage = function(content, first, last) {
   }
   
   // Remove the empty paragraph at the beginning of the document
-  if (first === true) body.getChild(0).removeFromParent();
+  if (page.first === true) body.getChild(0).removeFromParent();
 
   // Only add a page break if it is not the last new page
-  if (last === false) body.appendPageBreak();
+  if (page.last === false) body.appendPageBreak();
   log(' *** END COPY TEMPLATE *** \n');
+};
+
+
+/**
+ * Removes the extra paragraph element added after each table element.
+ * 
+ * This method should be run once creation of the output document is complete
+ * to remove all added paragraph elements from any inserted table elements.
+ */
+OutputDocument.prototype.removeTableParagraphs = function() {
+  var body = this.document.getBody();
+  var tables = body.getTables();
+  for (var i = 0; i < tables.length; i++ ) {
+    var table = tables[i];
+    var paragraph = table.getNextSibling();
+    paragraph.removeFromParent();
+  }
 };
 
 

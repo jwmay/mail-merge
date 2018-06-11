@@ -65,8 +65,8 @@ Merge.prototype.extractElements = function(containerElement) {
  */
 Merge.prototype.runMerge = function() {
   // Create the output document as a copy of the template file
-  this.output = this.getOutputDocument(); // hide this when testing
-  // this.output = new OutputDocument('1Xa0vpSHrBCfdwo0QZxLN6ILM8nlLp6YHlTRXtNGnthQ');  // show this when testing
+  // this.output = this.getOutputDocument(); // hide this when testing
+  this.output = new OutputDocument('1kYgNnY_rawuUnnVfkJ9UUuguVVsCxbYlBsRTqJ6CEpE');  // show this when testing
   this.output.clearBody();
 
   // Get the records (with header) and loop over each record
@@ -88,10 +88,15 @@ Merge.prototype.runMerge = function() {
     var bodyElements = this.extractElements(bodyCopy);
     
     // Add the modified template body elements to the output document
-    var first = (recordNum === 1 ? true : false);
-    var last = (recordNum == (records.length - 1) ? true : false);
-    this.output.insertNewPage(bodyElements, first, last);
+    var page = {
+      first: (recordNum === 1 ? true : false),
+      last: (recordNum == (records.length - 1) ? true : false),
+    };
+    this.output.insertNewPage(bodyElements, page);
   }
+
+  // Remove the extra empty paragraph elements added after each table
+  this.output.removeTableParagraphs();
 
   // Return a success message with a link to the output document
   var url = this.output.getUrl();
