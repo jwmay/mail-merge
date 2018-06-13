@@ -1,0 +1,51 @@
+==================================================
+Refactoring considerations - A Rough "Style" Guide
+==================================================
+
+--------------
+Comment Blocks
+--------------
+
+  Objects
+
+    When referring to objects in comments, refer to them as an instance of
+    their name.
+
+    Examples
+
+      * Returns an array of DisplayObject instances for all options to be displayed
+      * in the dialog. Includes a display for the save and cancel buttons.
+      * 
+      * @returns {DisplayObjects[]} An array of DisplayObject instances.
+
+
+      * Returns an instance of DisplayObject containing the option for selecting the
+      * merge type.
+      * 
+      * @returns {DisplayObject} A display object for the merge type selector.
+
+  Tag Definitions
+
+    * Be generic in defining the type of return (i.e., A DisplayObject
+      for the instance for the selector.)
+
+    Multi-line example
+
+      * Stores all of the options provided in options object parameter.
+      * 
+      * @param {object} options An object containing the option name as a key and the
+      *    option value as a value.
+
+-----------------
+If and For Blocks
+-----------------
+
+  Include a space after the 'if' and the 'for'.
+
+    if (...) {
+
+    }
+
+    for (...) {
+
+    }
