@@ -14,23 +14,23 @@
 
 
 /**
- * Modal window initialization.
+ * Runs dialog initialization and handles all dialog user inputs.
  */
 $(function() {
   initialize();
 
-  // Handle the merge type selectors.
+  // Handles the merge type selectors.
   var selectors = '#letters, #labels';
   $(document).on('click', selectors, function() {
     $(selectors).toggleClass('selected');
   });
 
-  // Handle the save options button click.
+  // Handles the save options button click.
   $(document).on('click', '#optionsSave', function() {
     saveOptions_onClick();
   });
 
-  // Handle the cancel button click.
+  // Handles the cancel button click.
   $(document).on('click', '#optionsCancel', function() {
     cancelOptions_onClick();
   });
@@ -38,7 +38,8 @@ $(function() {
 
 
 /**
- * Dialog initialization and user-response functions.
+ * Runs dialog initialization functions to retrieve and display the primary
+ * user interface components for the dialog.
  */
 function initialize() {
   google.script.run
@@ -48,7 +49,7 @@ function initialize() {
 
 
 /**
- * Handle the 'Save options' button click response.
+ * Handles the 'Save options' button click response.
  */
 function saveOptions_onClick() {
   var options = {};
@@ -59,7 +60,7 @@ function saveOptions_onClick() {
 
 
 /**
- * Handle the 'Cancel' button click response.
+ * Handles the 'Cancel' button click response.
  */
 function cancelOptions_onClick() {
   google.script.host.close();
