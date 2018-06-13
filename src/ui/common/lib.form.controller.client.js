@@ -48,7 +48,7 @@ function getValues_(selector) {
  *
  * @private
  * @param {string} name The name attribute of the checkboxes.
- * @return {array} An array of values of checked inputs.
+ * @returns {array} An array of values of checked inputs.
  */
 function getCheckedBoxes_(name) {
   var selector = 'input[name="' + name + '"]:checked';

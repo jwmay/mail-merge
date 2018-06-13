@@ -14,11 +14,18 @@
 
 
 /**
- * Returns and HTML-formatted string containing the user-interface to display
+ * Returns an array of DisplayObjects containing the user-interface to display
  * on the sidebar.
  * 
- * @return {displayObjects[]} An array of display objects to construct
- *        the user-interface.
+ * The interface display will depend on which options have been selected and
+ * saved. The interface loads in a 'bottom-up' approach: the spreasheet selector
+ * will be displayed first and a stack will generate with each new selection.
+ * Once a spreadsheet has been selected, the sheet selector will display. Once a
+ * sheet has been selected, the insert merge field and merge control buttons
+ * will be displayed.
+ * 
+ * @returns {DisplayObjects[]} An array of DisplayObject instances that make up
+ *    the sidebar user interface.
  */
 function getSidebarDisplay() {
   var spreadsheet = new DataSpreadsheet();
@@ -26,7 +33,7 @@ function getSidebarDisplay() {
   var sheet = spreadsheet.getSheetName();
   var headers = spreadsheet.getSheetHeader();
 
-  // Construct the individual displayObjects for each component
+  // Construct the individual DisplayObjects for each component
   // of the sidebar display and store them in an array.
   var displayObjects = [];
   displayObjects.push(getSpreadsheetDisplay());
@@ -41,7 +48,8 @@ function getSidebarDisplay() {
     displayObjects.push(getMergeFieldDisplay());
   }
 
-  // Get the merge button display only if merge fields are displayed.
+  // Get the merge button display only if merge fields are displayed, which is
+  // based on their being a header row in the selected sheet.
   if (headers !== null) {
     displayObjects.push(getRunMergeDisplay());
   }
@@ -50,10 +58,12 @@ function getSidebarDisplay() {
 
 
 /**
- * Stores the selected sheet name and returns the header select display and
- * run merge display if the sheet has headers, otherwise, displays an error.
+ * Stores the selected sheet name and returns the merge field select display
+ * and run merge display if the sheet has headers, otherwise, displays an error.
  * 
  * @param {string} name The sheet name.
+ * @returns {DisplayObjects[]} An array of DisplayObject instances for the merge
+ *    field selector and merge control buttons.
  */
 function updateSelectedSheet(name) {
   var spreadsheet = new DataSpreadsheet();
@@ -74,9 +84,10 @@ function updateSelectedSheet(name) {
 
 
 /**
- * Returns a display object containing the spreadsheet file selector.
+ * Returns a display object containing the data spreadsheet file selector.
  * 
- * @return {displayObject} A dislpay object for the spreadsheet file selector.
+ * @returns {DisplayObject} A DislpayObject instance for the spreadsheet file
+ *    selector.
  */
 function getSpreadsheetDisplay() {
   var spreadsheet = new DataSpreadsheet();
@@ -95,7 +106,7 @@ function getSpreadsheetDisplay() {
   var content = '' +
       '<h4>Spreadsheet</h4>' +
       '<div class="file">' +
-        '<i class="fa fa-file" aria-hidden="true"></i> ' +
+        '<i class="fa fa-table" aria-hidden="true"></i> ' +
         '<span id="dataSpreadsheet">' + linkDisplay + '</span>' +
       '</div>' +
       '<div class="btn-bar">' +
@@ -107,16 +118,17 @@ function getSpreadsheetDisplay() {
 
 
 /**
- * Returns a display object containing the sheet selector.
+ * Returns a DisplayObject instance for selecting a sheet from the data
+ * spreadsheet.
  * 
- * @return {displayObject} A display object for the sheet selector.
+ * @returns {DisplayObject} A DisplayObject instance for the sheet selector.
  */
 function getSheetSelectDisplay() {
   var spreadsheet = new DataSpreadsheet();
   var selected = spreadsheet.getSheetName();
   var sheetNames = spreadsheet.getSheetNames();  
   var select = makeSelect(sheetNames, 'Select a sheet...', selected,
-          'sheetSelector');
+      'sheetSelector');
   var content = '' +
       '<h4>Sheet</h4>' +
       '<div>' +
@@ -128,10 +140,11 @@ function getSheetSelectDisplay() {
 
 
 /**
- * Returns a display object containing the merge field selector. If no headers
- * are found in the selected sheet, an error display object is returned.
+ * Returns a DisplayObject instance containing the merge field selector or an
+ * error message if no headers are found in the selected sheet.
  * 
- * @return {displayObject} A display object for the merge field selector.
+ * @returns {DisplayObject} A DisplayObject instance for the merge field
+ *    selector.
  */
 function getMergeFieldDisplay() {
   var spreadsheet = new DataSpreadsheet();
@@ -156,31 +169,21 @@ function getMergeFieldDisplay() {
           '</ul>' +
         '</div>';
 
-    //// REMOVE: Not needed as the ability to control flow will be based on
-    //// merge options where the user can specify a choice between placing each
-    //// record on a new page (for letters) or on the same page (for labels)
-    // Construct the rules selector display.
-    // content += '<h4>Rules</h4>' +
-    //     '<div class="selector">' +
-    //       '<ul>' +
-    //         '<li>Next record</li>' +
-    //       '</ul>' +
-    //     '</div>';
-
     var display = getDisplayObject('card', content, 'mergeFieldSelectDisplay');
     return display;
   } else {
-    var errorContent = 'No headers found in the selected sheet.';
-    var errorDisplay = getDisplayObject('alert-error', errorContent);
-    return errorDisplay;
+    var message = 'No headers found in the selected sheet.';
+    var error = getDisplayObject('alert-error', message);
+    return error;
   }
 }
 
 
 /**
- * Returns a display object containing the run merge button.
+ * Returns a DisplayObject instance containing the merge control buttons.
  * 
- * @return {displayObject} A display object for the run merge button.
+ * @returns {DisplayObject} A DisplayObject instance for the merge control
+ *    buttons.
  */
 function getRunMergeDisplay() {
   var content = '' +
@@ -197,8 +200,8 @@ function getRunMergeDisplay() {
 
 
 /**
- * Displays an HTML Service dialog in Google Sheets that contains client-side
- * JavaScript code for the merge options.
+ * Displays an HTML Service dialog in Google Sheets for setting the
+ * merge options.
  */
 function showMergeOptions() {
   showDialog('a.mail-merge.merge-options.view', 400, 266, 'Merge options');
@@ -206,11 +209,10 @@ function showMergeOptions() {
 
 
 /**
- * Displays an HTML Service dialog in Google Sheets that contains client-side
- * JavaScript code for the Google Picker API. Used to select the report
- * template file.
+ * Displays an HTML Service dialog in Google Sheets for the Google Picker API
+ * thas is used to select the source spreadsheet.
  */
 function showSpreadsheetPicker() {
-  showDialog('a.mail-merge.data-spreadsheet-picker.view', 900, 550,
-          'Select a spreadsheet');
+  showDialog('a.mail-merge.spreadsheet-picker.view', 900, 550,
+      'Select a spreadsheet');
 }

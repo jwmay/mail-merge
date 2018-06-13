@@ -49,10 +49,10 @@ function getPickerOAuthToken(picker) {
 
 
 /**
- * Creates a Picker that can access the user's spreadsheets and My Drive folder.
+ * Creates a Picker that can access the user's spreadsheets and Drive folders.
  *
  * @param {string} token An OAuth 2.0 access token that lets Picker access
- *     the file type specified in the addView call.
+ *    the file type specified in the addView call.
  */
 function createSpreadsheetPicker(token) {
   if (pickerApiLoaded && token) {
@@ -61,7 +61,7 @@ function createSpreadsheetPicker(token) {
         // Instruct Picker to display Spreadsheets only.
         .addView(new google.picker.View(google.picker.ViewId.SPREADSHEETS))
 
-        // Allow user to select files from their Google Drive folders.
+        // Allow user to select files from their Drive folders.
         .addView(new google.picker.DocsView()
             .setIncludeFolders(true)
             .setOwnedByMe(true))
@@ -87,7 +87,7 @@ function createSpreadsheetPicker(token) {
     picker.setVisible(true);
   } else {
     var error = getDisplayObject('alert-error',
-            'Unable to load the file picker. Please try again.');
+        'Unable to load the file picker. Please try again.');
     updateDisplay(error);
   }
 }

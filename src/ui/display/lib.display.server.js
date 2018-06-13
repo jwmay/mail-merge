@@ -1,5 +1,5 @@
 /**
- * Returns a display object to be used in the Display class.
+ * Returns a DisplayObject instance to be used in the Display class.
  *
  * Two types of display types can be generated: an alert-{type} or a card,
  * where {type} can be success, warning, error, or information. The content
@@ -11,23 +11,23 @@
  * close the current display is also available.
  *
  * @param {string} type The display type, either alert-{type} or card,
- *         where {type} can be success, warning, error, or information.
+ *    where {type} can be success, warning, error, or information.
  * @param {string} content The content to display.
  * @param {string=} id The id of the card. Default is none.
- * @param {string=} position The position of the card. Either top or bottom.
- *         Default is top.
+ * @param {string=} position The position of where the card will be added.
+ *    Either top or bottom. Default is top.
  * @param {boolean=} reset Clear the display of all alerts and cards before
- *         updating. Default is false.
+ *    updating. Default is false.
  * @param {boolean=} close Close the current display. Default is false.
- * @return {object} The display object.
+ * @return {object} An instance of DisplayObject.
  */
 var getDisplayObject = function(type, content, id, position, reset, close) {
   // Assign default values as Google's server 'gs' does not support
   // ES6 default parameter values in the function definition.
-  id = undefined === id ? '' : id;
-  position = undefined === position ? 'top' : position;
-  reset = undefined === reset ? false : reset;
-  close = undefined === close ? false : close;
+  id = (undefined === id ? '' : id);
+  position = (undefined === position ? 'top' : position);
+  reset = (undefined === reset ? false : reset);
+  close = (undefined === close ? false : close);
   
   var displayObject = {
     type: type,
@@ -44,8 +44,8 @@ var getDisplayObject = function(type, content, id, position, reset, close) {
 /**
  * Returns the content of the filename to be displayed in an HTML template.
  *
- * @param {string} filename The file name to include.
- * @return {string} The file content.
+ * @param {string} filename The name of the file with the html content.
+ * @returns {string} An HTML-formatted string with the content of the file.
  */
 function include(filename) {
   var content = HtmlService.createHtmlOutputFromFile(filename).getContent();

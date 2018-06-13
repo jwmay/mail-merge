@@ -93,6 +93,9 @@ function closeButton() {
  * of each option will be used as the option's value. Optional class names and
  * an id can be specified for the select element.
  * 
+ * @todo If only one option is given, display that option only, do not display
+ *    the 'Select and item...' message.
+ * 
  * @param {array} options The options to add to the select element.
  * @param {array=} message The default message to display in the select element.
  *        Default is "Select an item...".
@@ -111,8 +114,7 @@ function makeSelect(options, message, value, id, classes) {
   classes = classes === undefined ? '' : classes;
 
   var select = [];
-  select.push(Utilities.formatString('<select id="%s" class="%s">',
-          id, classes));
+  select.push(Utilities.formatString('<select id="%s" class="%s">', id, classes));
 
   // Construct the default option if there is no assigned value.
   if (value === '' || value === null || value === undefined) {

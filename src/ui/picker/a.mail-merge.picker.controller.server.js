@@ -14,17 +14,18 @@
 
 
 /**
- * Process the selected file from the Google Picker API. Perform mime-type
- * validation and store the id of the selected file. If an invalid mime-type
- * is selected, a display object containing an error message is returned.
+ * Processes the selected file from the Google Picker API. Performs mime-type
+ * validation and stores the id of the selected file. If an invalid mime-type
+ * is selected, a DisplayObject instance containing the error message is
+ * returned.
  * 
  * @param {array} files An array of JSON objects returned by Google Picker
- *        representing the selected file.
- * @return {displayObject} A display object containing the success message, or
- *        error message if the incorrect mime-type was selected.
+ *    representing the selected file.
+ * @returns {DisplayObject} An instance of DisplayObject with a success message,
+ *    or an error message if the incorrect mime-type was selected.
  */
 function loadSpreadsheetFile(files) {
-  // Clear all stored document properties before loading new file.
+  // Clears all stored document properties before loading the new file.
   var storage = new PropertyStore();
   storage.clean();
 
@@ -33,14 +34,16 @@ function loadSpreadsheetFile(files) {
     var dataSpreadsheet = new DataSpreadsheet();
     dataSpreadsheet.setId(file.id);
     
-    // Refresh the sidebar to display the newly-selected file.
+    // Refreshs the sidebar to display the newly-selected file.
     onShowSidebar();
     var success = getDisplayObject('alert-success',
-            'Spreadsheet file successfully updated.', '', 'top', false, true);
+        'Spreadsheet file successfully updated.', '', 'top', false, true);
     return success;
   } else {
-    var error = getDisplayObject('alert-error',
-            'An invalid file type was given. Only Google Sheets are allowed.');
+    var message = 'An invalid file type was given. ' +
+        'Only Google Sheets are allowed. Close this window and click `Select ' +
+        'file` to try again.';
+    var error = getDisplayObject('alert-error', message);
     return error;
   }
 }

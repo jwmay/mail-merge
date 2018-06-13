@@ -14,31 +14,30 @@
 
 
 /**
- * Sidebar initialization and user-response functions.
+ * Runs sidebar initialization and handles all sidebar user inputs.
  */
 $(function() {
   initialize();
 
-  // Handle the select spreadsheet file button click.
+  // Handles the select spreadsheet file button click.
   $(document).on('click', '#selectSpreadsheet', function() {
     selectSpreadsheet_onClick();
   });
 
-  // Handle the run merge button click.
+  // Handles the run merge button click.
   $(document).on('click', '#runMerge', function() {
     runMerge_onClick();
   });
 
-  // Handle the merge options button click.
+  // Handles the merge options button click.
   $(document).on('click', '#mergeOptions', function() {
     mergeOptions_onClick();
   });
 
-  // Update the merge field selector when the sheet selector changes.
+  // Updates the merge field selector when the sheet selector changes.
   $(document).on('change', '#sheetSelector', function() {
-    // Remove the merge field selector display, the run merge display, and any
-    // alerts before replacement. Remove the default option in the sheet
-    // selector.
+    // Removes the merge field selector, the merge controls, and any alerts
+    // before replacement. Removes the default option in the sheet selector.
     clearDisplay('alerts');
     $('#mergeFieldSelectDisplay').remove();
     $('#runMergeDisplay').remove();
@@ -52,23 +51,22 @@ $(function() {
     }
   });
 
-  // Handle clicks to the insert merge field selector.
-  var dataOptionSelector = '#mergeFieldSelectDisplay li';
-  $(document).on('click', dataOptionSelector, function() {
-    var data = $(this).html();
+  // Handles clicks to the insert merge field selector.
+  var mergeFieldSelector = '#mergeFieldSelectDisplay li';
+  $(document).on('click', mergeFieldSelector, function() {
+    var field = $(this).html();
     google.script.run
-        .withSuccessHandler(insertMergeFieldCallback)
-        .insertMergeField(data);
+      .withSuccessHandler(insertMergeFieldCallback)
+      .insertMergeField(field);
   });
 });
 
 
 /**
  * Runs sidebar initialization functions to retrieve and display the primary
- * UI components based on selected and stored data.
+ * user interface components for the sidebar.
  */
 function initialize() {
-  // Display the data spreadsheet and file selector button.
   google.script.run
     .withSuccessHandler(updateDisplay)
     .getSidebarDisplay();
@@ -76,9 +74,9 @@ function initialize() {
 
 
 /**
- * Handle the 'Select file' button click response. This handles the process of
- * allowing the user to select a data spreadsheet file, storing the file's id, 
- * and updating the sidebar display with the file's name and a link to the file.
+ * Handles the 'Select file' button click response. This handles the process of
+ * allowing the user to select a data spreadsheet file, storing the id of the
+ * file, and updating the sidebar display with a hyperlinked name for the file.
  */
 function selectSpreadsheet_onClick() {
   showLoading();
@@ -89,7 +87,7 @@ function selectSpreadsheet_onClick() {
 
 
 /**
- * Handle the 'Run merge' button click response.
+ * Handles the 'Run merge' button click response.
  */
 function runMerge_onClick() {
   showLoading();
@@ -101,23 +99,22 @@ function runMerge_onClick() {
 
 
 /**
- * Handle the 'Merge options' button click response.
+ * Handles the 'Merge options' button click response.
  */
 function mergeOptions_onClick() {
-  google.script.run
-      .showMergeOptions();
+  google.script.run.showMergeOptions();
 }
 
 
 /**
- * Handle the callback after a merge field has been inserted into the document
- * by displaying an error message if the insert failed.
+ * Handles the callback after a merge field has been inserted into the document
+ * by displaying an error message only if the insert failed.
  * 
- * @param {object} display A display object containing an error message,
- *        otherwise, null if the insert was successful.
+ * @param {DisplayObject} display A DisplayObject instance containing an error
+ *    message, or null if no display should be show.
  */
 function insertMergeFieldCallback(display) {
-  if (display !== undefined) {
+  if (display !== null) {
     updateDisplay(display);
   }
 }
