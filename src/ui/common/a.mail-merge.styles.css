@@ -1,6 +1,6 @@
 /**
-* Base styles
-*/
+ * Base styles
+ */
 body {
   font-size: 15px;
   line-height: 21px;
@@ -42,8 +42,8 @@ code {
 
 
 /**
-* Form styles
-*/
+ * Form styles
+ */
 .form-options {
   background-color: #eee;
   padding: 20px;
@@ -74,8 +74,8 @@ code {
 
 
 /**
-* Selector styles
-*/
+ * Selector styles
+ */
 .selector {
   border: 1px solid #ccc;
   max-height: 200px;
@@ -97,4 +97,58 @@ code {
 
 .selector ul li:hover {
   background-color: #eee;
+}
+
+
+/**
+ * Block Selector styles
+ */
+ .block-selectors {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.block-selectors li {
+  display: flex;
+  align-items: center;
+  list-style: none inside none;
+  transition: background-color 0.2s linear;
+  cursor: pointer;
+  border: 1px solid #eee;
+  margin-bottom: 12px;
+  padding: 10px;
+}
+
+.block-selectors li:last-of-type {
+  margin-bottom: 0;
+}
+
+.block-selectors li:hover {
+  background-color: #eee;
+}
+
+.block-selectors li.selected {
+  background-color: #eee;
+}
+
+.block-selectors .selector-icon {
+  width: 14%;
+  margin: 0 20px;
+}
+
+.block-selectors .selector-content {
+  width: 86%;
+}
+
+.block-selectors .selector-title {
+  margin-bottom: 4px;
+}
+
+.block-selectors .selector-description {
+  margin: 0;
+  color: #aaa;
+  font-style: italic;
+  font-size: 0.8rem;
+  line-height: 1rem;
 }

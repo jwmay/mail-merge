@@ -147,4 +147,21 @@
   .border-0 {
     border: none;
   }
+
+
+  /**
+   * Dialog-specific styles
+   */
+  .dialog .loading {
+    left: 35%;
+  }
+
+  .dialog .card {
+    padding: 0;
+    border: none;
+  }
+
+  .dialog .card:last-of-type {
+    border: none;
+  }
 </style>
