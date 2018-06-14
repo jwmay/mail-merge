@@ -2,11 +2,29 @@
 Refactoring considerations - A Rough "Style" Guide
 ==================================================
 
---------------
-Comment Blocks
---------------
+--------
+Features
+--------
 
-  Objects
+  * allow user to input a custom output file name
+  * allow user to setup batches
+  * allow user to specify a start and end row
+  * allow user to specify an output file type
+  * allow user to create one output or a unique output file for each record
+  * email support (?)
+
+--------
+Comments
+--------
+
+  Inline Comments
+
+    * Inline comments should read in the present tense (i.e., Return rather
+      than returns)
+
+    * Inline comments should NOT end with a period or other punctuation
+
+  Comments about Objects
 
     When referring to objects in comments, refer to them as an instance of
     their name.
@@ -24,7 +42,7 @@ Comment Blocks
       * 
       * @returns {DisplayObject} A display object for the merge type selector.
 
-  Tag Definitions
+  Tag Definitions in Comment Blocks
 
     * Be generic in defining the type of return (i.e., A DisplayObject
       for the instance for the selector.)
@@ -49,3 +67,42 @@ If and For Blocks
     for (...) {
 
     }
+
+--------------------
+Variable Definitions
+--------------------
+
+  If a variable or function definiton spans more than one line, indent the next
+  line twice for a total of four spaces.
+  
+    var error = getDisplayObject('alert-error',
+        'Unable to load the file picker. Please try again.');
+
+------------------------
+HTML Content Definitions
+------------------------
+
+  Always make the first line blank and indent all following lines at least
+  twice.
+
+    Example
+    
+      var content = '' +
+        '<h4>Spreadsheet</h4>' +
+        '<div class="file">' +
+          '<i class="fa fa-file" aria-hidden="true"></i> ' +
+          '<span id="dataSpreadsheet">' + linkDisplay + '</span>' +
+        '</div>' +
+        '<div class="btn-bar">' +
+          '<input type="button" value="Select file" id="selectSpreadsheet">' +
+        '</div>';
+
+------------------------------
+Multi-Line Object Method Calls
+------------------------------
+
+  Indent the additional lines only once.
+
+    google.script.run
+      .withSuccessHandler(hideLoading)
+      .showSpreadsheetPicker();
