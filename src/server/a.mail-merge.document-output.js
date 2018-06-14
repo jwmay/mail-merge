@@ -84,7 +84,7 @@ OutputDocument.prototype.insertNewPage = function(content, page) {
   for (var i = 0; i < content.length; i++) {
     var element = content[i];
     var type = element.getType();
-    if (this.config.debut) log('   * Element type: ' + type);
+    if (this.config.debug) log('   * Element type: ' + type);
     if (type == DocumentApp.ElementType.PARAGRAPH) {
       body.appendParagraph(element);
     } else if (type == DocumentApp.ElementType.LIST_ITEM) {

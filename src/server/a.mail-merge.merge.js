@@ -86,7 +86,7 @@ Merge.prototype.runMerge = function() {
   for (var recordNum = 1; recordNum < records.length; recordNum++) {
     // Get the current record
     var record = records[recordNum];
-    log('>>> Current Record: ' + recordNum + ' <<<');
+    if (this.config.debug) log('>>> Current Record: ' + recordNum + ' <<<');
 
     // Get a copy of the template and loop over the fields to replace them
     // in body copy
