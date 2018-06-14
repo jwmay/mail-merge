@@ -15,7 +15,7 @@
 
 /**
  * Base class for the data spreadsheet that contains the data to merge into
- * into the document.
+ * the document.
  * 
  * @constructor
  */
@@ -29,7 +29,7 @@ var DataSpreadsheet = function() {
 /**
  * Returns the stored id of the data spreadsheet.
  * 
- * @return {string} The spreadsheet id.
+ * @returns {string} The spreadsheet id.
  */
 DataSpreadsheet.prototype.getId = function() {
   var id = this.storage.getProperty(this.data_spreadsheet_id_key);
@@ -48,9 +48,9 @@ DataSpreadsheet.prototype.setId = function(id) {
 
 
 /**
- * Returns the selected sheet name.
+ * Returns the stored sheet name.
  * 
- * @return {string} The sheet name.
+ * @returns {string} The sheet name.
  */
 DataSpreadsheet.prototype.getSheetName = function() {
   var name = this.storage.getProperty(this.data_sheet_name_key);
@@ -72,17 +72,13 @@ DataSpreadsheet.prototype.setSheetName = function(name) {
  * Returns the data spreadsheet as a Google Spreadsheet object, or null if
  * no spreadsheet id is stored.
  * 
- * @return {Spreadsheet} The spreadsheet as a Google Spreadsheet object, or
- *        null if no spreadsheet id is stored.
+ * @returns {Spreadsheet} The spreadsheet as a Google Spreadsheet object, or
+ *    null if no spreadsheet id is stored.
  */
 DataSpreadsheet.prototype.getSpreadsheet = function() {
   var id = this.getId();
-  if (id !== null) {
-    var spreadsheet = SpreadsheetApp.openById(id);
-    return spreadsheet;
-  } else {
-    return null;
-  }
+  var spreadsheet = (id !== null ? SpreadsheetApp.openById(id) : null);
+  return spreadsheet;
 };
 
 
@@ -90,13 +86,12 @@ DataSpreadsheet.prototype.getSpreadsheet = function() {
  * Returns the title of the data spreadsheet, or null if no spreadsheet
  * id is stored.
  * 
- * @return {string} The spreadsheet title, or null if no spreadsheet
- *        id is stored.
+ * @returns {string} The spreadsheet title, or null if no spreadsheet
+ *    id is stored.
  */
 DataSpreadsheet.prototype.getName = function() {
   var spreadsheet = this.getSpreadsheet();
-  if (spreadsheet === null) return null;
-  var name = spreadsheet.getName();
+  var name = (spreadsheet !== null ? spreadsheet.getName() : null);
   return name;
 };
 
@@ -105,13 +100,12 @@ DataSpreadsheet.prototype.getName = function() {
  * Returns the url of the data spreadsheet, or null if no spreadsheet
  * id is stored.
  * 
- * @return {string} The spreadsheet url, or null if no spreadsheet
- *        id is stored.
+ * @returns {string} The spreadsheet url, or null if no spreadsheet
+ *    id is stored.
  */
 DataSpreadsheet.prototype.getUrl = function() {
   var spreadsheet = this.getSpreadsheet();
-  if (spreadsheet === null) return null;
-  var url = spreadsheet.getUrl();
+  var url = (spreadsheet !== null ? spreadsheet.getUrl() : null);
   return url;
 };
 
@@ -120,18 +114,21 @@ DataSpreadsheet.prototype.getUrl = function() {
  * Returns an array of all the sheet names in the spreadsheet, or null if no
  * spreadsheet id is stored.
  * 
- * @return {array} An array containing the sheet names as strings.
+ * @returns {array} An array containing the sheet names as strings.
  */
 DataSpreadsheet.prototype.getSheetNames = function() {
   var spreadsheet = this.getSpreadsheet();
-  if (spreadsheet === null) return null;
-  var sheets = spreadsheet.getSheets();
-  var sheetNames = [];
-  for (var i = 0; i < sheets.length; i++) {
-    var sheet = sheets[i];
-    sheetNames.push(sheet.getName());
+  if (spreadsheet !== null) {
+    var sheets = spreadsheet.getSheets();
+    var sheetNames = [];
+    for (var i = 0; i < sheets.length; i++) {
+      var sheet = sheets[i];
+      sheetNames.push(sheet.getName());
+    }
+    return sheetNames;
+  } else {
+    return null;
   }
-  return sheetNames;
 };
 
 
@@ -139,7 +136,7 @@ DataSpreadsheet.prototype.getSheetNames = function() {
  * Returns the selected sheet as a Google Sheet object, or null if no sheet or
  * spreadsheet is selected.
  * 
- * @return {Sheet} The selected sheet, or null if no sheet is selected.
+ * @returns {Sheet} The selected sheet, or null if no sheet is selected.
  */
 DataSpreadsheet.prototype.getSheet = function() {
   // Return null if there is no selected spreadsheet.
@@ -148,8 +145,7 @@ DataSpreadsheet.prototype.getSheet = function() {
 
   // Return the sheet, or null if there is no selected sheet.
   var sheetName = this.getSheetName();
-  if (sheetName === null) return null;
-  var sheet = spreadsheet.getSheetByName(sheetName);
+  var sheet = (sheetName !== null ? spreadsheet.getSheetByName(sheetName) : null);
   return sheet;
 };
 
@@ -160,7 +156,7 @@ DataSpreadsheet.prototype.getSheet = function() {
  * If there is no selected sheet, the sheet has no data, or there is no header,
  * returns null. The header is considered the first row of the selected sheet.
  * 
- * @return {array} The header names as strings, or null if there is no header.
+ * @returns {array} The header names as strings, or null if there is no header.
  */
 DataSpreadsheet.prototype.getSheetHeader = function() {
   // Get the sheet, or return null if there is no selected sheet or spreadsheet.
@@ -186,7 +182,7 @@ DataSpreadsheet.prototype.getSheetHeader = function() {
  * A record is considered a row in the selected sheet, excluding the first row,
  * which is considered the header row.
  * 
- * @return {integer} The number of records in the sheet.
+ * @returns {integer} The number of records in the sheet.
  */
 DataSpreadsheet.prototype.getRecordCount = function() {
   // Get the sheet, or return null if there is no selected sheet or spreadsheet.
@@ -205,7 +201,7 @@ DataSpreadsheet.prototype.getRecordCount = function() {
  * 
  * A data field is considered a column in the selected sheet.
  * 
- * @return {integer} The number of data fields in the sheet.
+ * @returns {integer} The number of data fields in the sheet.
  */
 DataSpreadsheet.prototype.getDataCount = function() {
   // Get the sheet, or return null if there is no selected sheet or spreadsheet.
@@ -224,7 +220,7 @@ DataSpreadsheet.prototype.getDataCount = function() {
  * Returns a two-dimensional array of values, indexed by row, then by column.
  * The header row is included as the first row of values.
  * 
- * @return {array[][]} A two-dimensional array of values.
+ * @returns {array[][]} A two-dimensional array of values.
  */
 DataSpreadsheet.prototype.getRecords = function() {
   // Get the sheet, or return null if there is no selected sheet or spreadsheet.

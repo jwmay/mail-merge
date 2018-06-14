@@ -14,13 +14,14 @@
 
 
 /**
- * Configuration parameters that are passed into the configuration
- * factory constructor.
+ * Returns an instance of Configuration with the dfault parameters that are
+ * passed into the configuration factory constructor.
  * 
- * @return {Configuration} Default JSON configuration settings object.
+ * @returns {Configuration} An instance of the Configuration settings object.
  */
 function getDefaultConfiguration_() {
   return {
     debug: false,
+    outputFileNamePrefix: '[Merge Output] ',
   };
 }

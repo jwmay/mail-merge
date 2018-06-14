@@ -13,21 +13,21 @@
 // limitations under the License.
 
 
-// For testing - broadens the OAuth scope to allow opening any
-// Document on the current user's Drive
-/** @NotOnlyCurrentDoc */
+// **
+// This file is only used in the development version of the project.
+// **
 
 
 /**
- * @param {myproj.json.Configuration} configuration
- *     The current configuration settings.
- * @return {myproj.json.Configuration} configuration
- *     The current configuration settings, updated with test settings.
+ * Returns an instance of Configuration with any development environment
+ * specific options added.
+ * 
+ * @param {Configuration} configuration The current configuration settings.
+ * @returns {Configuration} The current configuration settings, updated with
+ *    test settings.
  */
- function provideEnvironmentConfiguration_(configuration) {
-  // Change ID below to a Document ID you can read
-  configuration.debugDocumentId =
-      '1dX4jZFPtfGYytuDQZl4BirNq_mO5KjYzs93ijUqb1YI';
+function provideEnvironmentConfiguration_(configuration) {
   configuration.debug = true;
+  configuration.outputFileId = '1kYgNnY_rawuUnnVfkJ9UUuguVVsCxbYlBsRTqJ6CEpE';
   return configuration;
 }

@@ -15,20 +15,21 @@
 
 var Configuration = {
   /**
-  * Returns the default global settings object. If a developer has added
-  * function 'provideEnvironmentConfiguration_(globals)' to their project, that
-  * will be added to the global namespace, and will be visible here to allow
-  * the dev to set specific values for their run.
+  * Returns an instance of the default global settings object.
   * 
-  * @return {myproj.json.Configuration}
+  * If a developer has added function 'provideEnvironmentConfiguration_(globals)'
+  * to their project, that will be added to the global namespace, and will be
+  * visible here to allow the dev to set specific values for their run.
+  * 
+  * @returns {Configuration} An instance of the Configuration settings object.
   */
   getCurrent: function() {
-    if (typeof getDefaultConfiguration_ === 'undefined') {
+    if (typeof getDefaultConfiguration_ === undefined) {
       throw 'You must provide an implementation of getDefaultConfiguration_' +
           'to use this configuration library.';
     }
     var defaultConfiguration = getDefaultConfiguration_();
-    if (typeof provideEnvironmentConfiguration_ !== 'undefined') {
+    if (typeof provideEnvironmentConfiguration_ !== undefined) {
       return provideEnvironmentConfiguration_(defaultConfiguration);
     } else {
       return defaultConfiguration;

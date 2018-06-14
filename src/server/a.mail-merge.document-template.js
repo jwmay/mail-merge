@@ -82,11 +82,10 @@ TemplateDocument.prototype.getName = function() {
 
 
 /**
- * Creates a copy of the template file with the given output anme and
- * returns the id fo the new copy.
+ * Creates a copy of the template file with the given output name and
+ * returns the id of the new copy.
  * 
- * @param {string} outputName The filename that should be applied to
- *        the new copy.
+ * @param {string} outputName The filename that should be applied to the new copy.
  * @returns {string} The id of the new copy.
  */
 TemplateDocument.prototype.makeCopy = function(outputName) {
@@ -100,12 +99,12 @@ TemplateDocument.prototype.makeCopy = function(outputName) {
 
 /**
  * Inserts the merge field into the template document as <<field>>. Returns null
- * if the field was successfully inserted, otherwise, returns a displayObject
- * containing the error message.
+ * if the field was successfully inserted, otherwise, returns a DisplayObject
+ * instance containing the error message.
  * 
  * @param {string} field The merge field to insert.
  * @returns {null|object} Returns null if the field was successfully inserted,
- *        otherwise, returns a displayObject containing the error message.
+ *    otherwise, returns a DisplayObject instance containing the error message.
  */
 TemplateDocument.prototype.insertMergeField = function(field) {
   var document = this.getDocument();
@@ -113,14 +112,14 @@ TemplateDocument.prototype.insertMergeField = function(field) {
   var dataVariable = TemplateDocument.getMergeField(field);
   var element = cursor.insertText(dataVariable);
   if (element !== null) {
-    // Position the cursor at the end of the inserted merge field variable.
+    // Position the cursor at the end of the inserted merge field variable
     var elementEnd = field.length + 4; // the 4 accounts for the '<<' and '>>'
     var position = document.newPosition(element, elementEnd);
     document.setCursor(position);
     return null;
   } else {
     var error = getDisplayObject('alert-error',
-            'There was an error inserting the merge field.');
+        'There was an error inserting the merge field.');
     return error;
   }
 };

@@ -17,7 +17,8 @@
  * Runs the merge and returns the results of the merge, either a success message
  * or an error message, for display in the UI.
  * 
- * @return {DisplayObject} The results of the merge for display in the UI.
+ * @returns {DisplayObject} An instance of DisplayObject with the results of
+ *    the merge for display in the UI.
  */
 function runMerge() {
   var merge = new Merge();
@@ -27,12 +28,14 @@ function runMerge() {
 
 
 /**
- * The Merge object performs the merge by using the data spreadsheet and
- * template document and is responsible for creating the output document.
+ * The Merge object performs all of the merge functions by using the data
+ * spreadsheet and template document and is responsible for creating the
+ * output document.
  * 
  * @constructor
  */
 var Merge = function() {
+  this.config = Configuration.getCurrent();
   this.spreadsheet = new DataSpreadsheet();
   this.template = new TemplateDocument();
   this.output = {};
@@ -40,7 +43,8 @@ var Merge = function() {
 
 
 /**
- * Returns an array of child Elements cotained within the containerElement.
+ * Returns an array of all the child Elements cotained within the
+ * containerElement.
  * 
  * @returns {Elements[]} An array of child elements.
  */
@@ -58,17 +62,24 @@ Merge.prototype.extractElements = function(containerElement) {
 /**
  * Runs the mail merge by creating a copy of the template file body, replacing
  * the fields with their respective data, and appending the elements of the body
- * to the output document. Returns a DisplayObject containing a success message
- * with a link to the output document.
+ * to the output document. Returns a DisplayObject instance containing a success
+ * message with a link to the output document.
  * 
- * @return {DisplayObject} The results of the merge for display in the UI.
+ * @returns {DisplayObject} An instance of DisplayObject with the results of
+ *    the merge for display in the UI.
  */
 Merge.prototype.runMerge = function() {
-  // Create the output document as a copy of the template file
-  // this.output = this.getOutputDocument(); // hide this when testing
-  this.output = new OutputDocument('1kYgNnY_rawuUnnVfkJ9UUuguVVsCxbYlBsRTqJ6CEpE');  // show this when testing
-  this.output.clearBody();
+  // Create the output document as a copy of the template file, or use a file
+  // id from the configuration object if in debug mode
+  if (!this.config.debug) {
+    this.output = this.getOutputDocument();
+  } else {
+    this.output = new OutputDocument(this.config.outputFileId);
+  }
 
+  // Clear the contents of the output document body
+  this.output.clearBody();
+  
   // Get the records (with header) and loop over each record
   var records = this.spreadsheet.getRecords();
   var fields = records[0];
@@ -77,7 +88,8 @@ Merge.prototype.runMerge = function() {
     var record = records[recordNum];
     log('>>> Current Record: ' + recordNum + ' <<<');
 
-    // Get a copy of the template and loop over the fields to replace them in body copy
+    // Get a copy of the template and loop over the fields to replace them
+    // in body copy
     var bodyCopy = this.template.getBodyCopy();
     for (var fieldNum = 0; fieldNum < fields.length; fieldNum++) {
       var field = fields[fieldNum];
@@ -100,20 +112,21 @@ Merge.prototype.runMerge = function() {
 
   // Return a success message with a link to the output document
   var url = this.output.getUrl();
-  var content = 'Merge done! ' +
-          '<a href="' + url + '">Click here</a> to open the output document. ';
+  var content = '' +
+      'Merge done! ' +
+      '<a href="' + url + '">Click here</a> to open the output document. ';
   var results = getDisplayObject('alert-success', content);
   return results;
 };
 
 
 /**
- * Returns the output file which is a copy of the template file.
+ * Returns an OutputDocument instance after copying the template document.
  * 
- * @return {OutputDocument} The output document.
+ * @returns {OutputDocument} An OutputDocument instance of the output file.
  */
 Merge.prototype.getOutputDocument = function() {
-  var outputFileName = '[Merge Output] ' + this.template.getName();
+  var outputFileName = this.config.outputFileNamePrefix + this.template.getName();
   var outputFileId = this.template.makeCopy(outputFileName);
   var outputFile = new OutputDocument(outputFileId);
   return outputFile;

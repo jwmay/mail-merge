@@ -25,6 +25,7 @@
  * @param {string} id The id of the output document.
  */
 var OutputDocument = function(id) {
+  this.config = Configuration.getCurrent();
   this.id = id;
   this.document = this.getDocument();
 };
@@ -34,7 +35,7 @@ var OutputDocument = function(id) {
  * Returns the output document as a Google Document object, which is a copy of
  * the template document.
  * 
- * @return {Document} The output document.
+ * @returns {Document} The output document.
  */
 OutputDocument.prototype.getDocument = function() {
   var document = DocumentApp.openById(this.id);
@@ -54,9 +55,9 @@ OutputDocument.prototype.getUrl = function() {
 
 
 /**
- * Clears the contents of the body element.
+ * Clears the contents of the body element and returns the body element.
  * 
- * @return {Body} The Body element of the document.
+ * @returns {Body} The body of the document.
  */
 OutputDocument.prototype.clearBody = function() {
   var body = this.document.getBody();
@@ -66,7 +67,7 @@ OutputDocument.prototype.clearBody = function() {
 
 
 /**
- * Inserts a page break on the last page of the document add adds the given
+ * Inserts a page break on the last page of the document and adds the given
  * content to the new page.
  * 
  * The page parameter accepts an object consisting of flags indicating if the
@@ -79,11 +80,11 @@ OutputDocument.prototype.clearBody = function() {
  */
 OutputDocument.prototype.insertNewPage = function(content, page) {
   var body = this.document.getBody();
-  log(' *** START COPY TEMPLATE *** ');
+  if (this.config.debug) log(' *** START COPY TEMPLATE *** ');
   for (var i = 0; i < content.length; i++) {
     var element = content[i];
     var type = element.getType();
-    log('   * Element type: ' + type);
+    if (this.config.debut) log('   * Element type: ' + type);
     if (type == DocumentApp.ElementType.PARAGRAPH) {
       body.appendParagraph(element);
     } else if (type == DocumentApp.ElementType.LIST_ITEM) {
@@ -96,9 +97,9 @@ OutputDocument.prototype.insertNewPage = function(content, page) {
   // Remove the empty paragraph at the beginning of the document
   if (page.first === true) body.getChild(0).removeFromParent();
 
-  // Only add a page break if it is not the last new page
+  // Only add a page break if it is not the last new page to be added
   if (page.last === false) body.appendPageBreak();
-  log(' *** END COPY TEMPLATE *** \n');
+  if (this.config.debug) log(' *** END COPY TEMPLATE *** \n');
 };
 
 
@@ -127,7 +128,7 @@ OutputDocument.prototype.removeTableParagraphs = function() {
  */
 OutputDocument.prototype.hasHeader = function() {
   var header = this.document.getHeader();
-  log('  * Header: ' + header + ' *');
+  if (this.config.debug) log('  * Header: ' + header + ' *');
   // var headerText = header.findElement(DocumentApp.ElementType.PARAGRAPGH);
   var headerText = header.appendParagraph('This is just a test.');
   return headerText;
