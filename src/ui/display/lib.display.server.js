@@ -23,7 +23,7 @@
  */
 var getDisplayObject = function(type, content, id, position, reset, close) {
   // Assign default values as Google's server 'gs' does not support
-  // ES6 default parameter values in the function definition.
+  // ES6 default parameter values in the function definition
   id = (undefined === id ? '' : id);
   position = (undefined === position ? 'top' : position);
   reset = (undefined === reset ? false : reset);

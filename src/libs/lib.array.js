@@ -17,11 +17,11 @@
  * Returns the array with all empty, null, and undefined elements removed. This
  * does not modify the original array.
  * 
- * @returns An array with no empty, null, or undefined elements.
+ * @returns {array} An array with no empty, null, or undefined elements.
  */
 Array.prototype.removeEmpty = function() {
-  var cleanedArray = this.filter(function(n) {
+  var cleanArray = this.filter(function(n) {
       return (n !== undefined && n !== null && n !== '');
   });
-  return cleanedArray;
+  return cleanArray;
 };

@@ -17,6 +17,9 @@
  * Helper function for inserting a merge field into the template document.
  * 
  * @param {string} field The merge field to insert.
+ * @returns {DisplayObject|null} Null is returned if the insert was successful,
+ *    otherwise, a DisplayObject instance is returned with an error message if
+ *    the insert was not successful.
  */
 function insertMergeField(field) {
   var template = new TemplateDocument();

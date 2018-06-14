@@ -123,7 +123,7 @@ function saveMergeOptions(options) {
 function setDefaultOptions() {
   var storage = new PropertyStore();
 
-  // Set default merge type to 'letters' if no option is set.
+  // Set default merge type to 'letters' if no option is set
   var mergeType = storage.getProperty('mergeType');
   if (mergeType === null) mergeType = 'letters';
   storage.setProperty('mergeType', mergeType);

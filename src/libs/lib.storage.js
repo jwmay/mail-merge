@@ -25,31 +25,35 @@ var PropertyStore = function() {
 
 
 /**
- * Set a property with the given key and value. An optional flag for storing
- * an array is available, which converts the array into a JSON string.
+ * Sets a property with the given key and value.
+ * 
+ * An optional flag for storing an array is available, which converts the array
+ * into a JSON string.
  * 
  * @param {string} key The key that labels the stored data.
  * @param {string|array} value The value to be stored.
  * @param {boolean=} isArray Set to true if storing an array.
  */
 PropertyStore.prototype.setProperty = function(key, value, isArray) {
-  value = isArray === true ? JSON.stringify(value) : value;
+  value = (isArray === true ? JSON.stringify(value) : value);
   this.store.setProperty(key, value);
 };
 
 
 /**
- * Get a property with the given key. An optional flag for retrieving an array
- * is available, which converts the JSON string into an array object.
+ * Gets a property with the given key.
+ * 
+ * An optional flag for retrieving an array is available, which converts the
+ * JSON string into an array object.
  * 
  * @param {string} key The key that labels the stored data.
  * @param {boolean=} isArray Set to true if retrieving a stored array.
  * @return {string|array} A string if isArray set to false, otherwise, an array
- *     object.
+ *    object.
  */
 PropertyStore.prototype.getProperty = function(key, isArray) {
   var property = this.store.getProperty(key);
-  property = isArray === true ? JSON.parse(property) : property;
+  property = (isArray === true ? JSON.parse(property) : property);
   return property;
 };
 

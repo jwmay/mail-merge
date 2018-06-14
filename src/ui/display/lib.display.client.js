@@ -9,8 +9,8 @@
    *
    * Example: google.script.run.withSuccessHandler(updateDisplay).serverCall();
    *
-   * @param {object|Array} displayObject A displayObject or an array of
-   *    displayObjects taht defines the display parameters.
+   * @param {object|Array} displayObject A DisplayObject instance or an array of
+   *    DisplayObject instances that defines the display parameters.
    */
   function updateDisplay(displayObject) {
     var display = new Display();
@@ -23,7 +23,7 @@
       display.updateDisplay(displayObject);
     }
     
-    // Hidse the loading overlay in case it was displayed during a server call.
+    // Hide the loading overlay in case it was displayed during a server call
     hideLoading();
   }
 
@@ -90,13 +90,13 @@
   *    the parameters that define the display.
   */
   Display.prototype.updateDisplay = function(displayObject) {
-    // Clears the display if reset is True.
+    // Clear the display if reset is True
     if (displayObject.reset === true) this.resetDisplay();
     
-    // Closes the display if close is True.
+    // Close the display if close is True
     if (displayObject.close === true) google.script.host.close();
 
-    // Updates the display with the specified display type.
+    // Update the display with the specified display type
     if (displayObject.type.startsWith('alert') === true) {
       var alert = this.getAlert(displayObject.type, displayObject.content);
       $(alert).hide().appendTo(this.alert).slideDown('slow');
@@ -109,7 +109,7 @@
         $(card).hide().appendTo(this.content).slideDown('slow');
       }
     
-    // Shows an error if an incorrect display type was specified.
+    // Show an error if an incorrect display type was specified
     } else {
       var message = 'An incorrect display type was specified.';
       var error = getDisplayObject('alert-error', message);

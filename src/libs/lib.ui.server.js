@@ -14,12 +14,13 @@
 
 
 /**
- * Open a dialog window using an HTML template with the given dimensions.
+ * Opens a dialog window using an HTML template with the given dimensions
+ * and title.
  * 
- * @param {string} source Name of the HTML template file.
- * @param {integer} width Width of dialog window.
- * @param {integer} height Height of dialog window.
- * @param {string} title Title to display on dialog window.
+ * @param {string} source The name of the HTML template file.
+ * @param {integer} width The width of dialog window.
+ * @param {integer} height The height of dialog window.
+ * @param {string} title The title to display on dialog window.
  */
 function showDialog(source, width, height, title) {
   var ui = HtmlService.createTemplateFromFile(source)
@@ -31,10 +32,10 @@ function showDialog(source, width, height, title) {
 
 
 /**
- * Open a sidebar using an HTML template.
+ * Opens a sidebar using an HTML template.
  * 
- * @param {string} source Name of the HTML template file.
- * @param {string} title Title to display on sidebar.
+ * @param {string} source The name of the HTML template file.
+ * @param {string} title The title to display on sidebar.
  */
 function showSidebar(source, title) {
   var ui = HtmlService.createTemplateFromFile(source)
@@ -45,11 +46,11 @@ function showSidebar(source, title) {
 
 
 /**
- * Display a prompt and return the user's response.
+ * Displays a prompt and return the user's response.
  * 
  * @param {string} message The message to display.
  * @returns A string representing the user's response, or null if
- *     no response is given.
+ *    no response is given.
  */
 function showPrompt(message) {
   var ui = DocumentApp.getUi();
@@ -65,7 +66,7 @@ function showPrompt(message) {
 
 
 /**
- * Display an alert with a single OK button.
+ * Displays an alert with a single OK button.
  * 
  * @param {strong} title The title of the alert.
  * @param {string} message The message to display.
@@ -83,7 +84,7 @@ function showAlert(title, message) {
  */
 function closeButton() {
   button = '<div><input type="button" value="Close" class="btn" '+
-          'onclick="google.script.host.close();"></div>';
+      'onclick="google.script.host.close();"></div>';
   return button;
 }
 
@@ -94,20 +95,20 @@ function closeButton() {
  * an id can be specified for the select element.
  * 
  * @todo If only one option is given, display that option only, do not display
- *    the 'Select and item...' message.
+ *    the 'Select an item...' message.
  * 
  * @param {array} options The options to add to the select element.
  * @param {array=} message The default message to display in the select element.
- *        Default is "Select an item...".
+ *    Default is "Select an item...".
  * @param {string=} value The currently-selected value. Default is none.
  * @param {string=} id The id of the select element. Default is none.
  * @param {string=} classes The class name(s) of the select element. Default is
- *        none.
+ *    none.
  * @return {string} An HTML-formatted string containing the select element.
  */
 function makeSelect(options, message, value, id, classes) {
   // Default parameters are not supported by GAS server code, so define the
-  // optional variables here if they are not defined.
+  // optional variables here if they are not defined
   message = message === undefined ? 'Select an item...' : message;
   value = value === undefined ? '' : value;
   id = id === undefined ? '' : id;
@@ -116,12 +117,12 @@ function makeSelect(options, message, value, id, classes) {
   var select = [];
   select.push(Utilities.formatString('<select id="%s" class="%s">', id, classes));
 
-  // Construct the default option if there is no assigned value.
+  // Construct the default option if there is no assigned value
   if (value === '' || value === null || value === undefined) {
     select.push('<option value="" class="default">' + message + '</option>');
   }
 
-  // Construct the options.
+  // Construct the options
   for (i = 0; i < options.length; i++) {
     var option = options[i];
     var selected = option === value ? 'selected' : '';
@@ -129,7 +130,7 @@ function makeSelect(options, message, value, id, classes) {
             option, selected, option));
   }
 
-  // Close and construct the select element.
+  // Close and construct the select element
   select.push('</select>');
   var element = select.join('\n');
   return element;
@@ -142,10 +143,10 @@ function makeSelect(options, message, value, id, classes) {
  * property. 
  * 
  * @param {string} name The name for the checkbox group.
- * @param {array} items An array of objects.
+ * @param {array} items An array of value-item objects.
  * @param {boolean} allChecked If true, all checkboxes will be initially checked
- *     on display.
- * @returns An HTML-formatted string.
+ *    on display.
+ * @returns {string} An HTML-formatted string.
  */
 function showCheckboxes(name, items, allChecked) {
   var checkboxes = [];
@@ -170,7 +171,7 @@ function showCheckboxes(name, items, allChecked) {
  * 
  * @private
  * @param {array} sheets An array of Sheet objects.
- * @returns An array of objects.
+ * @returns {object[]} An array of objects.
  */
 function constructSheetSelectItems_(sheets) {
   var items = [];
@@ -188,12 +189,13 @@ function constructSheetSelectItems_(sheets) {
 
 /**
  * Returns the data structure for showCheckboxes() given an array of strings.
+ * 
  * The returned data is an array of objects each with a value and label
  * property.
  * 
  * @private
- * @param {array} columns An array of strings.
- * @returns An array of objects.
+ * @param {strings} columns An array of strings.
+ * @returns {object[]} An array of objects.
  */
 function constructColumnSelectItems_(columns, startIndex) {
   var items = [];

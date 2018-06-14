@@ -25,7 +25,7 @@
  *    or an error message if the incorrect mime-type was selected.
  */
 function loadSpreadsheetFile(files) {
-  // Clears all stored document properties before loading the new file.
+  // Clear all stored document properties before loading the new file
   var storage = new PropertyStore();
   storage.clean();
 
@@ -34,7 +34,7 @@ function loadSpreadsheetFile(files) {
     var dataSpreadsheet = new DataSpreadsheet();
     dataSpreadsheet.setId(file.id);
     
-    // Refreshs the sidebar to display the newly-selected file.
+    // Refresh the sidebar to display the newly-selected file
     onShowSidebar();
     var success = getDisplayObject('alert-success',
         'Spreadsheet file successfully updated.', '', 'top', false, true);

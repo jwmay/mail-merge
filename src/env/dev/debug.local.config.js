@@ -14,7 +14,7 @@
 
 
 // **
-// This file is only used in the development version of the project.
+// This file is to be used only in the development version of the project.
 // **
 
 

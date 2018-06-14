@@ -34,22 +34,22 @@ function getSidebarDisplay() {
   var headers = spreadsheet.getSheetHeader();
 
   // Construct the individual DisplayObjects for each component
-  // of the sidebar display and store them in an array.
+  // of the sidebar display and store them in an array
   var displayObjects = [];
   displayObjects.push(getSpreadsheetDisplay());
   
-  // Get the sheet selector display only if there are sheet names available.
+  // Get the sheet selector display only if there are sheet names available
   if (sheetNames !== null) {
     displayObjects.push(getSheetSelectDisplay());
   }
 
-  // Get the merge field selector only if a sheet is selected.
+  // Get the merge field selector only if a sheet is selected
   if (sheet !== null) {
     displayObjects.push(getMergeFieldDisplay());
   }
 
   // Get the merge button display only if merge fields are displayed, which is
-  // based on their being a header row in the selected sheet.
+  // based on their being a header row in the selected sheet
   if (headers !== null) {
     displayObjects.push(getRunMergeDisplay());
   }
@@ -70,11 +70,11 @@ function updateSelectedSheet(name) {
   spreadsheet.setSheetName(name);
 
   // Get the merge field selector, or error display if there are
-  // no headers in selected sheet.
+  // no headers in selected sheet
   var displayObjects = [];
   displayObjects.push(getMergeFieldDisplay());
 
-  // Get the run merge display only if there are headers in the selected sheet.
+  // Get the run merge display only if there are headers in the selected sheet
   var headers = spreadsheet.getSheetHeader();
   if (headers !== null) {
     displayObjects.push(getRunMergeDisplay());
@@ -93,7 +93,7 @@ function getSpreadsheetDisplay() {
   var spreadsheet = new DataSpreadsheet();
   var id = spreadsheet.getId();
 
-  // Get the link to display.
+  // Get the link to display
   var linkDisplay = 'No file selected';
   if (id !== null) {
     var name = spreadsheet.getName();
@@ -151,7 +151,7 @@ function getMergeFieldDisplay() {
   var headers = spreadsheet.getSheetHeader();
 
   if (headers !== null) {
-    // Construct the list of merge field items.
+    // Construct the list of merge field items
     var list = [];
     for (var i = 0; i < headers.length; i++) {
       var header = headers[i];
@@ -160,7 +160,7 @@ function getMergeFieldDisplay() {
     }
     var listDisplay = list.join('\n');
     
-    // Construct the merge field display.
+    // Construct the merge field display
     var content = '' +
         '<h4>Insert merge field</h4>' +
         '<div class="selector">' +

@@ -58,28 +58,28 @@ function createSpreadsheetPicker(token) {
   if (pickerApiLoaded && token) {
     var picker = new google.picker.PickerBuilder()
         
-        // Instruct Picker to display Spreadsheets only.
+        // Instruct Picker to display Spreadsheets only
         .addView(new google.picker.View(google.picker.ViewId.SPREADSHEETS))
 
-        // Allow user to select files from their Drive folders.
+        // Allow user to select files from their Drive folders
         .addView(new google.picker.DocsView()
             .setIncludeFolders(true)
             .setOwnedByMe(true))
 
-        // Allow user to select files from their Team Drives.
+        // Allow user to select files from their Team Drives
         .enableFeature(google.picker.Feature.SUPPORT_TEAM_DRIVES)
         .addView(new google.picker.DocsView()
             .setEnableTeamDrives(true)
             .setIncludeFolders(true))
         
-        // Hide title bar since an Apps Script dialog already has a title.
+        // Hide title bar since an Apps Script dialog already has a title
         .hideTitleBar()
         
         .setOAuthToken(token)
         .setCallback(spreadsheetPickerCallback)
         .setOrigin(google.script.host.origin)
         
-        // Instruct Picker to fill the dialog, minus 2px for the border.
+        // Instruct Picker to fill the dialog, minus 2px for the border
         .setSize(PICKER_DIMENSIONS.width - 2,
             PICKER_DIMENSIONS.height - 2)
         .build();

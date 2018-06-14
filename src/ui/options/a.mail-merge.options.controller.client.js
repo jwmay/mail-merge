@@ -19,18 +19,18 @@
 $(function() {
   initialize();
 
-  // Handles the merge type selectors.
+  // Handle the merge type selectors
   var selectors = '#letters, #labels';
   $(document).on('click', selectors, function() {
     $(selectors).toggleClass('selected');
   });
 
-  // Handles the save options button click.
+  // Handle the save options button click
   $(document).on('click', '#optionsSave', function() {
     saveOptions_onClick();
   });
 
-  // Handles the cancel button click.
+  // Handle the cancel button click
   $(document).on('click', '#optionsCancel', function() {
     cancelOptions_onClick();
   });

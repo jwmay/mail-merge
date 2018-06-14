@@ -58,16 +58,3 @@ function log(message) {
   var msg = '<< LOG >> ' + message;
   Logger.log(msg);
 }
-
-
-/**
- * Logs an Apps Script exception, including the call stack.
- * 
- * @private
- * @param {Object} e Apps Script runtime error object
- */
-function logException_(e) {
-  Logger.log('Apps Script runtime exception:');
-  Logger.log(e.message);
-  Logger.log('\n' + e.stack + '\n');
-}
