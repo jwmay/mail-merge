@@ -27,6 +27,7 @@
 var OutputDocument = function(id) {
   this.id = id;
   this.document = this.getDocument();
+  this.body = this.document.getBody();
   this.config = Configuration.getCurrent();
 };
 
@@ -37,8 +38,7 @@ var OutputDocument = function(id) {
  * @returns {Body} The body of the document.
  */
 OutputDocument.prototype.clearBody = function() {
-  var body = this.document.getBody();
-  body = body.clear();
+  body = this.body.clear();
   return body;
 };
 
@@ -94,24 +94,23 @@ OutputDocument.prototype.hasHeader = function() {
  * @param {object} page Flags to control formatting of output document.
  */
 OutputDocument.prototype.insertNewPage = function(content, page) {
-  var body = this.document.getBody();
   for (var i = 0; i < content.length; i++) {
     var element = content[i];
     var type = element.getType();
     if (type == DocumentApp.ElementType.PARAGRAPH) {
-      body.appendParagraph(element);
+      this.body.appendParagraph(element);
     } else if (type == DocumentApp.ElementType.LIST_ITEM) {
-      body.appendListItem(element);
+      this.body.appendListItem(element);
     } else if (type == DocumentApp.ElementType.TABLE) {
-      body.appendTable(element);
+      this.body.appendTable(element);
     }
   }
   
   // Remove the empty paragraph at the beginning of the document
-  if (page.first === true) body.getChild(0).removeFromParent();
+  if (page.first === true) this.body.getChild(0).removeFromParent();
 
   // Only add a page break if it is not the last new page to be added
-  if (page.last === false) body.appendPageBreak();
+  if (page.last === false) this.body.appendPageBreak();
 };
 
 
@@ -122,8 +121,7 @@ OutputDocument.prototype.insertNewPage = function(content, page) {
  * to remove all added paragraph elements from any inserted table elements.
  */
 OutputDocument.prototype.removeTableParagraphs = function() {
-  var body = this.document.getBody();
-  var tables = body.getTables();
+  var tables = this.body.getTables();
   for (var i = 0; i < tables.length; i++) {
     var table = tables[i];
     var paragraph = table.getNextSibling();
