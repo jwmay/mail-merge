@@ -25,9 +25,21 @@
  * @param {string} id The id of the output document.
  */
 var OutputDocument = function(id) {
-  this.config = Configuration.getCurrent();
   this.id = id;
   this.document = this.getDocument();
+  this.config = Configuration.getCurrent();
+};
+
+
+/**
+ * Clears the contents of the body element and returns the body element.
+ * 
+ * @returns {Body} The body of the document.
+ */
+OutputDocument.prototype.clearBody = function() {
+  var body = this.document.getBody();
+  body = body.clear();
+  return body;
 };
 
 
@@ -55,14 +67,17 @@ OutputDocument.prototype.getUrl = function() {
 
 
 /**
- * Clears the contents of the body element and returns the body element.
+ * Returns true if the document has a header.
  * 
- * @returns {Body} The body of the document.
+ * @todo FIX: This function always detects a header, even if one is not present
+ * in the document.
  */
-OutputDocument.prototype.clearBody = function() {
-  var body = this.document.getBody();
-  body = body.clear();
-  return body;
+OutputDocument.prototype.hasHeader = function() {
+  var header = this.document.getHeader();
+  if (this.config.debug) log('  * Header: ' + header + ' *');
+  // var headerText = header.findElement(DocumentApp.ElementType.PARAGRAPGH);
+  var headerText = header.appendParagraph('This is just a test.');
+  return headerText;
 };
 
 
@@ -80,11 +95,9 @@ OutputDocument.prototype.clearBody = function() {
  */
 OutputDocument.prototype.insertNewPage = function(content, page) {
   var body = this.document.getBody();
-  if (this.config.debug) log(' *** START COPY TEMPLATE *** ');
   for (var i = 0; i < content.length; i++) {
     var element = content[i];
     var type = element.getType();
-    if (this.config.debug) log('   * Element type: ' + type);
     if (type == DocumentApp.ElementType.PARAGRAPH) {
       body.appendParagraph(element);
     } else if (type == DocumentApp.ElementType.LIST_ITEM) {
@@ -99,7 +112,6 @@ OutputDocument.prototype.insertNewPage = function(content, page) {
 
   // Only add a page break if it is not the last new page to be added
   if (page.last === false) body.appendPageBreak();
-  if (this.config.debug) log(' *** END COPY TEMPLATE *** \n');
 };
 
 
@@ -112,24 +124,9 @@ OutputDocument.prototype.insertNewPage = function(content, page) {
 OutputDocument.prototype.removeTableParagraphs = function() {
   var body = this.document.getBody();
   var tables = body.getTables();
-  for (var i = 0; i < tables.length; i++ ) {
+  for (var i = 0; i < tables.length; i++) {
     var table = tables[i];
     var paragraph = table.getNextSibling();
     paragraph.removeFromParent();
   }
-};
-
-
-/**
- * Returns true if the document has a header.
- * 
- * @todo FIX: This function always detects a header, even if one is not present
- * in the document.
- */
-OutputDocument.prototype.hasHeader = function() {
-  var header = this.document.getHeader();
-  if (this.config.debug) log('  * Header: ' + header + ' *');
-  // var headerText = header.findElement(DocumentApp.ElementType.PARAGRAPGH);
-  var headerText = header.appendParagraph('This is just a test.');
-  return headerText;
 };

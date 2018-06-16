@@ -6,6 +6,8 @@ Refactoring considerations - A Rough "Style" Guide
 Features
 --------
 
+  * if an error occurs during the merge, the output document has already been
+    created; this should not be the case if an error occurs
   * allow user to input a custom output file name
   * allow user to setup batches
   * allow user to specify a start and end row

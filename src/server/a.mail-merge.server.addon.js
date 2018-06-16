@@ -76,5 +76,5 @@ function onClearDocumentProperties() {
  * for testing purposes. This function is only available in debug mode.
  */
 function onFeatureTest() {
-  // do something
+  // Inser code to test here
 }
