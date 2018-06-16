@@ -29,7 +29,7 @@ var Configuration = {
           'to use this configuration library.';
     }
     var defaultConfiguration = getDefaultConfiguration_();
-    if (typeof provideEnvironmentConfiguration_ !== undefined) {
+    if (typeof provideEnvironmentConfiguration_ !== 'undefined') {
       return provideEnvironmentConfiguration_(defaultConfiguration);
     } else {
       return defaultConfiguration;
