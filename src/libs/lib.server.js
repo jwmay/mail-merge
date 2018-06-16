@@ -55,6 +55,5 @@ function inherit_(childClass, parentClass) {
  * @param {string} message The message to log.
  */
 function log(message) {
-  var msg = '<< LOG >> ' + message;
-  Logger.log(msg);
+  Logger.log(message);
 }
