@@ -34,7 +34,9 @@ function insertMergeField(field) {
  * 
  * @constructor
  */
-var TemplateDocument = function() {};
+var TemplateDocument = function() {
+  this.document = this.getDocument();
+};
 
 
 /**
@@ -46,8 +48,7 @@ var TemplateDocument = function() {};
  * @returns {Body} A copy of the document body.
  */
 TemplateDocument.prototype.getBodyCopy = function() {
-  var document = this.getDocument();
-  var body = document.getBody();
+  var body = this.document.getBody();
   var copy = body.copy();
   return copy;
 };
@@ -85,8 +86,7 @@ TemplateDocument.prototype.getDocument = function() {
  * @returns {string} The id of the template document.
  */
 TemplateDocument.prototype.getId = function() {
-  var document = this.getDocument();
-  var id = document.getId();
+  var id = this.document.getId();
   return id;
 };
 
@@ -109,8 +109,7 @@ TemplateDocument.getMergeField = function(field) {
  * @returns {string} The title of the template document.
  */
 TemplateDocument.prototype.getName = function() {
-  var document = this.getDocument();
-  var name = document.getName();
+  var name = this.document.getName();
   return name;
 };
 
@@ -121,7 +120,7 @@ TemplateDocument.prototype.getName = function() {
  * @returns {integer} The number of tables in the document.
  */
 TemplateDocument.prototype.getNumTables = function() {
-  var tables = this.getDocument().getBody().getTables();
+  var tables = this.document.getBody().getTables();
   var numTables = tables.length;
   return numTables;
 };
@@ -137,7 +136,7 @@ TemplateDocument.prototype.getNumTables = function() {
  * @returns {Table} The first table in the document.
  */
 TemplateDocument.prototype.getTable = function() {
-  var tables = this.getDocument().getBody().getTables();
+  var tables = this.document.getBody().getTables();
   var table = tables[0];
   return table;
 };
@@ -198,15 +197,14 @@ TemplateDocument.prototype.getTableDimensions = function() {
  *    otherwise, returns a DisplayObject instance containing the error message.
  */
 TemplateDocument.prototype.insertMergeField = function(field) {
-  var document = this.getDocument();
-  var cursor = document.getCursor();
+  var cursor = this.document.getCursor();
   var dataVariable = TemplateDocument.getMergeField(field);
   var element = cursor.insertText(dataVariable);
   if (element !== null) {
     // Position the cursor at the end of the inserted merge field variable
     var elementEnd = (field.length + 4); // the 4 accounts for the '<<' and '>>'
-    var position = document.newPosition(element, elementEnd);
-    document.setCursor(position);
+    var position = this.document.newPosition(element, elementEnd);
+    this.document.setCursor(position);
     return null;
   } else {
     var error = getDisplayObject('alert-error',
