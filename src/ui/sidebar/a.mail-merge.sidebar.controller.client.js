@@ -113,7 +113,7 @@ function mergeOptions_onClick() {
  * @param {DisplayObject} display A DisplayObject instance containing an error
  *    message, or null if no display should be show.
  */
-function insertMergeFieldCallback(display, user) {
+function insertMergeFieldCallback(display) {
   if (typeof display === 'object') {
     updateDisplay(display);
   }
