@@ -28,6 +28,9 @@
  */
 function provideEnvironmentConfiguration_(configuration) {
   configuration.debug = true;
-  configuration.outputFileId = '1kYgNnY_rawuUnnVfkJ9UUuguVVsCxbYlBsRTqJ6CEpE';
+  configuration.outputFileIds = {
+    letter: '1C80otET2O_o3OXpxpolIwymQzptRM5hxX2HgKiSYqBQ',
+    label: '1LD8lFWXWQ6t6uGlLVsT20meK7h17T2tlA2LXbVNlaiM',
+  };
   return configuration;
 }
