@@ -180,20 +180,64 @@ TemplateDocument.prototype.getTableDimensions = function() {
  */
 TemplateDocument.prototype.insertMergeField = function(field) {
   var cursor = this.document.getCursor();
+  var selection = this.document.getSelection();
   var dataVariable = TemplateDocument.getMergeField(field);
-  var element = cursor.insertText(dataVariable);
-  if (element !== null) {
-    // Position the cursor at the end of the inserted merge field variable
-    var elementEnd = (field.length + 4); // the 4 accounts for the '<<' and '>>'
-    var position = this.document.newPosition(element, elementEnd);
-    this.document.setCursor(position);
-    return null;
-  } else {
-    return getDisplayObject('alert-error',
-        'There was an error inserting the merge field.');
-  }
-};
+  if (cursor !== null) {
+    // Merge field will be inserted at the current cursor position
+    var inserted = cursor.insertText(dataVariable);
+    if (inserted !== null) {
+      // Position the cursor at the end of the inserted merge field variable
+      var elementEnd = (field.length + 4); // the 4 accounts for the '<<' and '>>'
+      var newPosition = this.document.newPosition(inserted, elementEnd);
+      this.document.setCursor(newPosition);
+      return null;
+    } else {
+      return getDisplayObject('alert-error',
+          'There was an error inserting the merge field. Please try again.');
+    }
+  } else if (selection !== null) {
+    // The current text selection will be replaced with the merge field
+    var elements = selection.getRangeElements();
+    for (var i = 0; i < elements.length; i++) {
+      var element = elements[i];
+      var elementType = element.getElement().getType();
 
+      // The following element types are not supported for selection replacement
+      if (elementType === DocumentApp.ElementType.EQUATION ||
+          elementType === DocumentApp.ElementType.EQUATION_FUNCTION ||
+          elementType === DocumentApp.ElementType.EQUATION_FUNCTION_ARGUMENT_SEPARATOR ||
+          elementType === DocumentApp.ElementType.EQUATION_SYMBOL ||
+          elementType === DocumentApp.ElementType.HORIZONTAL_RULE ||
+          elementType === DocumentApp.ElementType.INLINE_DRAWING ||
+          elementType === DocumentApp.ElementType.PAGE_BREAK ||
+          elementType === DocumentApp.ElementType.TABLE ||
+          elementType === DocumentApp.ElementType.TABLE_ROW ||
+          elementType === DocumentApp.ElementType.TABLE_CELL) {
+        return getDisplayObject('alert-error',
+            'Cannot replace selection with a merge field. ' +
+            'Only text selections can be replaced.');
+      }
+
+      // Only modify elements that can be edited as text; skip images and other
+      // non-text elements
+      if (element.getElement().editAsText) {
+        var text = element.getElement().editAsText();
+        if (element.isPartial()) {
+          text.deleteText(element.getStartOffset(), element.getEndOffsetInclusive())
+              .insertText(element.getStartOffset(), dataVariable);
+        } else {
+          text.appendText(dataVariable).removeFromParent();
+        }
+      }
+    }
+  } else {
+    // An unsupported element type was selected
+    return getDisplayObject('alert-error',
+        'Only text selections can be replaced.');
+  }
+  return null;
+};
+ 
 
 /**
  * Creates a copy of the template file with the given output name and
