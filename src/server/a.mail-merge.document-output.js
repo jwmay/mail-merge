@@ -28,18 +28,31 @@ var OutputDocument = function(id) {
   this.id = id;
   this.document = this.getDocument();
   this.body = this.document.getBody();
+  this.bodyCopy = this.body.copy();
   this.config = Configuration.getCurrent();
 };
 
 
 /**
- * Clears the contents of the body element and returns the body element.
- * 
- * @returns {Body} The body of the document.
+ * Clears the contents of the body element in the document itself. A preserved
+ * copy of the original body document is saved in the body property.
  */
 OutputDocument.prototype.clearBody = function() {
-  body = this.body.clear();
-  return body;
+  this.body.clear();
+};
+
+
+/**
+ * Returns a detached, deep copy of the body element.
+ * 
+ * Any child elements present in the element are also copied. The new element
+ * will not have a parent.
+ * 
+ * @returns {Body} A copy of the body.
+ */
+OutputDocument.prototype.getBodyCopy = function() {
+  var bodyCopy = this.bodyCopy.copy();
+  return bodyCopy;
 };
 
 
@@ -52,6 +65,24 @@ OutputDocument.prototype.clearBody = function() {
 OutputDocument.prototype.getDocument = function() {
   var document = DocumentApp.openById(this.id);
   return document;
+};
+
+
+/**
+ * Returns a detached, deep copy of the first table in the document.
+ * 
+ * Any child elements present in the element are also copied. The new element
+ * will not have a parent.
+ * 
+ * When running a label merge, the document should only contain one table. This
+ * method retrieves the first table in the document regardless of there being
+ * any additional tables.
+ * 
+ * @returns {Table} A copy of the first table in the document.
+ */
+OutputDocument.prototype.getTableCopy = function() {
+  var tableCopy = this.bodyCopy.getTables()[0].copy();
+  return tableCopy;
 };
 
 

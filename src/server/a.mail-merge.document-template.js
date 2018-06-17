@@ -23,8 +23,7 @@
  */
 function insertMergeField(field) {
   var template = new TemplateDocument();
-  var insert = template.insertMergeField(field);
-  return insert;
+  return template.insertMergeField(field);
 }
 
 
@@ -49,23 +48,7 @@ var TemplateDocument = function() {
  */
 TemplateDocument.prototype.getBodyCopy = function() {
   var body = this.document.getBody();
-  var copy = body.copy();
-  return copy;
-};
-
-
-/**
- * Returns a detached, deep copy of the first cell of the first table in the
- * document body element.
- * 
- * Any child elements present in the element are also copied. The new element
- * will not have a parent.
- * 
- * @returns {TableCell} A copy of the table cell.
- */
-TemplateDocument.prototype.getCellCopy = function() {
-  var tableCellCopy = this.getTable().getRow(0).getCell(0).copy();
-  return tableCellCopy;
+  return body.copy();
 };
 
 
@@ -75,8 +58,7 @@ TemplateDocument.prototype.getCellCopy = function() {
  * @returns {Document} The template file as a Google Document object.
  */
 TemplateDocument.prototype.getDocument = function() {
-  var document = DocumentApp.getActiveDocument();
-  return document;
+  return DocumentApp.getActiveDocument();
 };
 
 
@@ -86,8 +68,7 @@ TemplateDocument.prototype.getDocument = function() {
  * @returns {string} The id of the template document.
  */
 TemplateDocument.prototype.getId = function() {
-  var id = this.document.getId();
-  return id;
+  return this.document.getId();
 };
 
 
@@ -98,8 +79,7 @@ TemplateDocument.prototype.getId = function() {
  * @returns {string} The formatted merge field.
  */
 TemplateDocument.getMergeField = function(field) {
-  var mergeField = '<<' + field + '>>';
-  return mergeField;
+  return '<<' + field + '>>';
 };
 
 
@@ -109,8 +89,7 @@ TemplateDocument.getMergeField = function(field) {
  * @returns {string} The title of the template document.
  */
 TemplateDocument.prototype.getName = function() {
-  var name = this.document.getName();
-  return name;
+  return this.document.getName();
 };
 
 
@@ -121,24 +100,25 @@ TemplateDocument.prototype.getName = function() {
  */
 TemplateDocument.prototype.getNumTables = function() {
   var tables = this.document.getBody().getTables();
-  var numTables = tables.length;
-  return numTables;
+  return tables.length;
 };
 
 
 /**
- * Returns the first table in the document body element.
+ * Returns a detached, deep copy of the first table in the document.
+ * 
+ * Any child elements present in the element are also copied. The new element
+ * will not have a parent.
  * 
  * When running a label merge, the document should only contain one table. This
  * method retrieves the first table in the document regardless of there being
  * any additional tables.
  * 
- * @returns {Table} The first table in the document.
+ * @returns {Table} A copy of the first table in the document.
  */
-TemplateDocument.prototype.getTable = function() {
+TemplateDocument.prototype.getTableCopy = function() {
   var tables = this.document.getBody().getTables();
-  var table = tables[0];
-  return table;
+  return tables[0].copy();
 };
 
 
@@ -157,10 +137,10 @@ TemplateDocument.prototype.getTable = function() {
  *    the document.
  */
 TemplateDocument.prototype.getTableDimensions = function() {
-  var table = this.getTable();
-  var dimensions = {
+  var table = this.getTableCopy();
+  return {
     rows: table.getNumRows(),
-    cols: table.getRow(1).getNumCells(),
+    cols: table.getRow(0).getNumCells(),
     currentTableRow: {},
     /**
      * Returns the 2D row index given the 1D cell index.
@@ -183,7 +163,6 @@ TemplateDocument.prototype.getTableDimensions = function() {
       return currentCol;
     },
   };
-  return dimensions;
 };
 
 
@@ -195,6 +174,9 @@ TemplateDocument.prototype.getTableDimensions = function() {
  * @param {string} field The merge field to insert.
  * @returns {null|object} Returns null if the field was successfully inserted,
  *    otherwise, returns a DisplayObject instance containing the error message.
+ * 
+ * @todo If user has a selection, getCursor returns an error; use getSelection
+ *    to replace the user's current selection with a merge field
  */
 TemplateDocument.prototype.insertMergeField = function(field) {
   var cursor = this.document.getCursor();
@@ -207,9 +189,8 @@ TemplateDocument.prototype.insertMergeField = function(field) {
     this.document.setCursor(position);
     return null;
   } else {
-    var error = getDisplayObject('alert-error',
+    return getDisplayObject('alert-error',
         'There was an error inserting the merge field.');
-    return error;
   }
 };
 
@@ -225,6 +206,5 @@ TemplateDocument.prototype.makeCopy = function(outputName) {
   var id = this.getId();
   var templateFile = DriveApp.getFileById(id);
   var outputFile = templateFile.makeCopy(outputName);
-  var outputFileId = outputFile.getId();
-  return outputFileId;
+  return outputFile.getId();
 };
