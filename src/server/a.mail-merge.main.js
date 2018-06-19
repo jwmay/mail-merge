@@ -22,6 +22,7 @@
 function getDefaultConfiguration_() {
   return {
     debug: false,
+    outputFileId: '',
     outputFileNamePrefix: '[Merge Output] ',
   };
 }
