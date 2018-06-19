@@ -14,6 +14,45 @@
 
 
 /**
+ * Returns an HTML-formatted string to display a 'Close' button.
+ * 
+ * @returns {string} An HTML-formatted string.
+ */
+function closeButton() {
+  return '<div><input type="button" value="Close" class="btn" '+
+      'onclick="google.script.host.close();"></div>';
+}
+
+
+/**
+ * Displays an alert with a single OK button.
+ * 
+ * @param {string} title The title of the alert.
+ * @param {string} message The message to display.
+ */
+function showAlert(title, message) {
+  var ui = DocumentApp.getUi();
+  ui.alert(title, message, ui.ButtonSet.OK);
+}
+
+
+/**
+ * Displays an alert with 'Yes' and 'No' buttons. Returns the user selection as
+ * a 'yes' or 'no' string.
+ * 
+ * @param {string} title The title of the alert.
+ * @param {string} message The message to display.
+ * @returns {string} The response as a 'yes' or 'no'.
+ */
+function showConfirmation(title, message) {
+  var ui = DocumentApp.getUi();
+  var result = ui.alert(title, message, ui.ButtonSet.YES_NO);
+  if (result === ui.Button.YES) return 'yes';
+  return 'no';
+}
+
+
+/**
  * Opens a dialog window using an HTML template with the given dimensions
  * and title.
  * 
@@ -28,20 +67,6 @@ function showDialog(source, width, height, title) {
       .setWidth(width)
       .setHeight(height);
   DocumentApp.getUi().showModalDialog(ui, title);
-}
-
-
-/**
- * Opens a sidebar using an HTML template.
- * 
- * @param {string} source The name of the HTML template file.
- * @param {string} title The title to display on sidebar.
- */
-function showSidebar(source, title) {
-  var ui = HtmlService.createTemplateFromFile(source)
-      .evaluate()
-      .setTitle(title);
-  DocumentApp.getUi().showSidebar(ui);
 }
 
 
@@ -66,27 +91,18 @@ function showPrompt(message) {
 
 
 /**
- * Displays an alert with a single OK button.
+ * Opens a sidebar using an HTML template.
  * 
- * @param {strong} title The title of the alert.
- * @param {string} message The message to display.
+ * @param {string} source The name of the HTML template file.
+ * @param {string} title The title to display on sidebar.
  */
-function showAlert(title, message) {
-  var ui = DocumentApp.getUi();
-  var response = ui.alert(title, message, ui.ButtonSet.OK);
+function showSidebar(source, title) {
+  var ui = HtmlService.createTemplateFromFile(source)
+      .evaluate()
+      .setTitle(title);
+  DocumentApp.getUi().showSidebar(ui);
 }
 
-
-/**
- * Returns an HTML-formatted string to display a 'Close' button.
- * 
- * @returns {string} An HTML-formatted string.
- */
-function closeButton() {
-  button = '<div><input type="button" value="Close" class="btn" '+
-      'onclick="google.script.host.close();"></div>';
-  return button;
-}
 
 
 /**
@@ -132,8 +148,7 @@ function makeSelect(options, message, value, id, classes) {
 
   // Close and construct the select element
   select.push('</select>');
-  var element = select.join('\n');
-  return element;
+  return select.join('\n');
 }
 
 
@@ -165,29 +180,6 @@ function showCheckboxes(name, items, allChecked) {
 
 
 /**
- * Returns the data structure for showCheckboxes() given an array of Sheet
- * objects. The returned data is an array of objects each with a value and
- * label property.
- * 
- * @private
- * @param {array} sheets An array of Sheet objects.
- * @returns {object[]} An array of objects.
- */
-function constructSheetSelectItems_(sheets) {
-  var items = [];
-  for (var i = 0; i < sheets.length; i++) {
-    var sheet = sheets[i];
-    var item = {
-        value: sheet.getSheetId(),
-        label: sheet.getSheetName()
-    };
-    items.push(item);
-  }
-  return items;
-}
-
-
-/**
  * Returns the data structure for showCheckboxes() given an array of strings.
  * 
  * The returned data is an array of objects each with a value and label
@@ -206,6 +198,29 @@ function constructColumnSelectItems_(columns, startIndex) {
     var item = {
       value: colNum,
       label: col
+    };
+    items.push(item);
+  }
+  return items;
+}
+
+
+/**
+ * Returns the data structure for showCheckboxes() given an array of Sheet
+ * objects. The returned data is an array of objects each with a value and
+ * label property.
+ * 
+ * @private
+ * @param {array} sheets An array of Sheet objects.
+ * @returns {object[]} An array of objects.
+ */
+function constructSheetSelectItems_(sheets) {
+  var items = [];
+  for (var i = 0; i < sheets.length; i++) {
+    var sheet = sheets[i];
+    var item = {
+        value: sheet.getSheetId(),
+        label: sheet.getSheetName()
     };
     items.push(item);
   }
