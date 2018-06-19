@@ -7,13 +7,10 @@ Features
 --------
 
   * advanced options to disable 'fast letter merge' which uses table wrappers
-  * if an error occurs during the merge, the output document has already been
-    created; this should not be the case if an error occurs
-  * allow user to input a custom output file name
-  * allow user to setup batches
-  * allow user to specify a start and end row
-  * allow user to specify an output file type
-  * allow user to create one output or a unique output file for each record
+  * option to choose output type: Google Doc or PDF; single file or multi-file
+  * option to input a custom output file name
+  * option to setup batches
+  * option to specify a start and end row
   * email support (?)
 
 --------
