@@ -1,0 +1,25 @@
+Sorry there is no (e)mail in the 'mail' part of this add-on. I am a high school
+teacher who uses Google Drive for all of my files. Throughout the year I need to
+make personalized copies of reminders, passes, and letters for students, which
+are hand-delivered in hard-copy form to students. However, to create these
+documents I had to resort to Microsoft Office for its simple 'mail merge'
+feature. This is a problem for which I have been unsuccessful in finding a free
+and easy-to-use add-on for doing this, so I wrote my own.
+
+'Simply Mail Merge' takes a template Google Document and inserts data from a
+Google Sheets spreadsheet. It can create individual letters (a different record
+for each new page) or labels (multple records on the same page). The label
+feature is great for creating quarter- or half-sheet sized documents for
+students. Simply create an size a table, design your document in a cell of that
+table, and copy/paste the contents of that cell to the rest of the table. Merge
+fields in each cell of the table will be replaced with a unique record.
+
+
+FAQ
+
+Q: Why are my documents inside of a table?
+A: To speed up the document creation, the content of your template document is
+   placed inside of a table with no padding or border. Since tables must have a
+   paragraph before and after them (when starting and ending a docuemnt) the
+   margins of the output document have been slightly shifted to account for the
+   space occupied by these small paragraphs.
