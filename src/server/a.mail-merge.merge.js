@@ -43,20 +43,24 @@ var Merge = function() {
   //    call to eliminate this mess
   this.storage = new PropertyStore();
   this.mergeType = this.storage.getProperty('mergeType');
+  // this.mergeLetterMethod = this.storage.getProperty('mergeLetterMethod');
+  this.mergeLetterMethod = 'table-wrapped';
 };
 
 
 /**
- * Returns an array of all the child Elements cotained within the
- * containerElement.
+ * Returns an array of all the child Elements cotained within the given
+ * container element.
  * 
+ * @param {ContainerElement} container The container element whose elements will
+ *    be extracted.
  * @returns {Elements[]} An array of child elements.
  */
-Merge.prototype.extractElements = function(containerElement) {
-  var totalElements = containerElement.getNumChildren();
+Merge.prototype.extractElements = function(container) {
+  var numElements = container.getNumChildren();
   var elements = [];
-  for (var i = 0; i < totalElements; i++) {
-    var element = containerElement.getChild(i).copy();
+  for (var i = 0; i < numElements; i++) {
+    var element = container.getChild(i).copy();
     elements.push(element);
   }
   return elements;
@@ -73,11 +77,11 @@ Merge.prototype.extractElements = function(containerElement) {
  */
 Merge.prototype.getOutputDocument = function() {
   var fileId = '';
-  if (this.config.debug === false) {
+  if (this.config.debug === false || (this.config.debug === true && this.config.outputFileId === '')) {
     var fileName = this.config.outputFileNamePrefix + this.template.getName();
     fileId = this.template.makeCopy(fileName);
   } else {
-    fileId = (this.mergeType === 'labels' ? this.config.outputFileIds.label : this.config.outputFileIds.letter);
+    fileId = this.config.outputFileId;
   }
   return new OutputDocument(fileId);
 };
@@ -109,7 +113,34 @@ Merge.prototype.runMerge = function() {
 
   // Run the selected merge type, or return an error DisplayObject instance
   if (this.mergeType === 'letters') {
-    error = this.runLetterMerge(records, fields);
+    // Allow user to select letter merge method; slower method may better
+    // preserve formatting if the table-wrapped method cannot
+    if (this.mergeLetterMethod === 'table-wrapped') {
+      // Warn the user if the template has a blank line, which will not format
+      // correctly in the output via the table-wrapped method; the blank line
+      // needs a space character
+      if (this.template.startsWithBlankLine() === false) {
+        error = this.runTableWrappedLetterMerge(records, fields);
+      } else {
+        // Alert the user about how to proceed when the document starts with a
+        // blank line (a paragraph with no text); adding a simple space to this
+        // paragraph will preserve the formatting
+        var warning = 'Your document starts with a blank line. To preserve ' +
+            'the formatting of your document, a space should be inserted ' +
+            'into this blank line before merging. (Or you can use a slower ' +
+            'merge method that may better preserve your formatting by going ' +
+            'to the advanced section of the Merge Options.)\n\n' +
+            'Would you like to continue with the merge?';
+        var continueMerge = showConfirmation('Blank line warning', warning);
+        if (continueMerge === 'yes') {
+          error = this.runTableWrappedLetterMerge(records, fields);
+        } else {
+          error = getDisplayObject('alert-warning', 'Merge canceled.');
+        }
+      }
+    } else {
+      error = this.runLetterMerge(records, fields);
+    }
   } else if (this.mergeType === 'labels') {
     error = this.runLabelMerge(records, fields);
   } else {
@@ -123,8 +154,8 @@ Merge.prototype.runMerge = function() {
   // Return a success message with a link to the output document
   var url = this.output.getUrl();
   var content = '' +
-      'Merge done! ' +
-      '<a href="' + url + '">Click here</a> to open the output document. ';
+      'Merge complete! ' +
+      '<a href="' + url + '">Click here</a> to open the output document.';
   return getDisplayObject('alert-success', content);
 };
 
@@ -177,10 +208,7 @@ Merge.prototype.runLabelMerge = function(records, fields) {
       var currentTableCell = tableCopy.getCell(cellRow, cellCol);
 
       // Replace all of the fields in the current cell of the copied table
-      for (var fieldNum = 0; fieldNum < fields.length; fieldNum++) {
-        var field = fields[fieldNum];
-        currentTableCell.replaceText('<<' + field + '>>', record[fieldNum]);
-      }
+      this.replaceMergeFields(currentTableCell, record, fields);
 
       // Tasks for when the end of the table or the last record is reached
       if (current.rowNum === tableInfo.rows && current.colNum === tableInfo.cols || recordNum === numRecords) {
@@ -230,14 +258,18 @@ Merge.prototype.runLabelMerge = function(records, fields) {
  * Runs the merge of the records from the data spreadsheet into the output
  * document as a new page for each record.
  * 
+ * Note: this is a less efficient method of performing a letter merge as it
+ * makes too many server calls by appending every element of the template the
+ * output for every record. The table-wrapped letter merge (see below) is more
+ * efficient. This method is preserved for use as an advanced option in case a 
+ * user is having issues preserving formatting via the table-wrapped method.
+ * This method should ensure a more accurate attempt at preserving all original
+ * formatting (which would like be some weird, fringe formatting cases).
+ * 
  * @param {array} records The records from the spreadsheet.
  * @param {array} fields The field names.
  * @returns {null|DisplayObject} Returns null if the merge was successful, or
  *    a DisplayObject instance with an error message.
- * 
- * @todo To speed up this function, can we put the body elements into a table
- *    with no padding or borders (invisible) and then append tables to the
- *    output document?
  */
 Merge.prototype.runLetterMerge = function(records, fields) {
   this.output = this.getOutputDocument();
@@ -252,10 +284,7 @@ Merge.prototype.runLetterMerge = function(records, fields) {
     // Replace all of the fields in a copy of the body element of the template
     // document with their respective values
     var bodyCopy = this.template.getBodyCopy();
-    for (var fieldNum = 0; fieldNum < fields.length; fieldNum++) {
-      var field = fields[fieldNum];
-      bodyCopy.replaceText('<<' + field + '>>', record[fieldNum]);
-    }
+    this.replaceMergeFields(bodyCopy, record, fields);
     
     // Convert the body into an array of its child elements
     var bodyElements = this.extractElements(bodyCopy);
@@ -273,4 +302,73 @@ Merge.prototype.runLetterMerge = function(records, fields) {
 
   // No errors so return null
   return null;
+};
+
+
+/**
+ * Runs the merge of the records from the data spreadsheet into the output
+ * document as a table-wrapped body for each record.
+ * 
+ * Note: this is the most efficient method of performing a letter merge as it
+ * makes fewer server calls by appending the template body elements to a single
+ * table, which is saved, copied, and appended to the output body. This reduces
+ * server calls but may disrupt the original formatting in the output document
+ * (possible only in weird, fringe cases). As a backup, the less efficient
+ * method was preserved (see above).
+ * 
+ * @param {array} records The records from the spreadsheet.
+ * @param {array} fields The field names.
+ * @returns {null|DisplayObject} Returns null if the merge was successful, or
+ *    a DisplayObject instance with an error message.
+ */
+Merge.prototype.runTableWrappedLetterMerge = function(records, fields) {
+  this.output = this.getOutputDocument();
+  this.output.clearBody();
+  this.output.shiftMargins();
+
+  // Wrap the content of the template body into a table cell to speed up the
+  // merge process by minimizing the number of append calls to the output
+  var bodyElements = this.extractElements(this.template.getBodyCopy());
+  var bodyWrapper = new BodyWrapper(this.output.body, bodyElements);
+
+  // Loop over each record in the data spreadsheet and add it to the output
+  var numRecords = this.spreadsheet.getRecordCount();
+  for (var recordNum = 1; recordNum < records.length; recordNum++) {
+    // Get the current record
+    var record = records[recordNum];
+
+    // Replace all of the fields in a copy of the table-wrapped body element of
+    // the template document with their respective values
+    var tableWrappedBody = bodyWrapper.getTableCopy();
+    this.replaceMergeFields(tableWrappedBody, record, fields);
+
+    // Save the updated table for appending to the output
+    bodyWrapper.table = tableWrappedBody;
+    
+    // Add the modified table-wrapped template body elements to the output
+    var page = {
+      first: (recordNum === 1 ? true : false),
+      last: (recordNum === numRecords ? true : false),
+    };
+    bodyWrapper.appendWrappedBody(this.output.body, page);
+  }
+
+  // No errors so return null
+  return null;
+};
+
+
+/**
+ * Replaces all of the merge fields in the given element with data from the
+ * given record. This method modifies the content of the given element.
+ * 
+ * @param {Element} element The element whose text will be searched and repalced.
+ * @param {array} record An array containing the record data.
+ * @param {array} fields An array containing the names of the merge fields.
+ */
+Merge.prototype.replaceMergeFields = function(element, record, fields) {
+  for (var fieldNum = 0; fieldNum < fields.length; fieldNum++) {
+    var field = fields[fieldNum];
+    element.replaceText('<<' + field + '>>', record[fieldNum]);
+  }
 };

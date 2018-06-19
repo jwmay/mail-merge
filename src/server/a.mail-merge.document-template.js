@@ -174,9 +174,6 @@ TemplateDocument.prototype.getTableDimensions = function() {
  * @param {string} field The merge field to insert.
  * @returns {null|object} Returns null if the field was successfully inserted,
  *    otherwise, returns a DisplayObject instance containing the error message.
- * 
- * @todo If user has a selection, getCursor returns an error; use getSelection
- *    to replace the user's current selection with a merge field
  */
 TemplateDocument.prototype.insertMergeField = function(field) {
   var cursor = this.document.getCursor();
@@ -209,6 +206,7 @@ TemplateDocument.prototype.insertMergeField = function(field) {
           elementType === DocumentApp.ElementType.EQUATION_SYMBOL ||
           elementType === DocumentApp.ElementType.HORIZONTAL_RULE ||
           elementType === DocumentApp.ElementType.INLINE_DRAWING ||
+          elementType === DocumentApp.ElementType.INLINE_IMAGE ||
           elementType === DocumentApp.ElementType.PAGE_BREAK ||
           elementType === DocumentApp.ElementType.TABLE ||
           elementType === DocumentApp.ElementType.TABLE_ROW ||
@@ -251,4 +249,20 @@ TemplateDocument.prototype.makeCopy = function(outputName) {
   var templateFile = DriveApp.getFileById(id);
   var outputFile = templateFile.makeCopy(outputName);
   return outputFile.getId();
+};
+
+
+/**
+ * Checks the first child element of document body for any content and returns
+ * true if the first line does not contain content (is blank) or false if there
+ * is content.
+ * 
+ * @returns {boolean} True if the document starts with a blank line, otherwise,
+ *    returns false.
+ */
+TemplateDocument.prototype.startsWithBlankLine = function() {
+  var body = this.document.getBody();
+  var firstElement = body.getChild(0);
+  if (firstElement.getNumChildren() === 0) return true;
+  return false;
 };
