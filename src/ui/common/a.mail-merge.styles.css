@@ -42,24 +42,8 @@ code {
 
 
 /**
- * Form styles
+ * File display styles
  */
-.form-options {
-  background-color: #eee;
-  padding: 20px;
-}
-
-.form-group {
-  position: relative;
-  left: -10px;
-  padding: 10px;
-}
-
-.form-group.error {
-  color: black;
-  background-color: rgba(255, 0, 0, 0.35);
-}
-
 .file {
   padding: 10px;
   background-color: #eee;
@@ -70,6 +54,25 @@ code {
 
 .file i {
   margin-right: 4px;
+}
+
+
+/**
+ * Button Link styles
+ */
+input[type="button"].btn-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgb(66, 132, 230);
+}
+
+input[type="button"].btn-link:hover {
+  text-decoration: underline;
+}
+
+input[type="button"].btn-link:active {
+  box-shadow: none;
 }
 
 

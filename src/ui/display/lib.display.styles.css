@@ -82,6 +82,71 @@
 
 
   /**
+   * Form styles
+   */
+  form {
+    margin-bottom: 24px;
+  }
+  
+  .form-row {
+    display: flex;
+  }
+  
+  .form-group {
+    width: 100%;
+    margin-bottom: 30px;
+  }
+  
+  .form-group:last-of-type {
+    margin-bottom: 0;
+  }
+  
+  .form-group label {
+    width: inherit;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  .form-group input[type="text"] {
+    width: inherit;
+    height: 30px;
+    font-size: 12px;
+    padding: 0 8px;
+  }
+  
+  .form-group select {
+    width: 90%;
+  }
+  
+  .form-check {
+    margin: 6px 0;
+  }
+  
+  .form-check label {
+    font-weight: normal;
+  }
+  
+  .form-check-header {
+    margin: 0;
+    font-size: 14px;
+  }
+  
+  .form-check .help-text {
+    padding-left: 25px;
+  }
+  
+  .help-text {
+    display: block;
+    font-size: 10px;
+    font-style: italic;
+    font-weight: normal;
+    line-height: 11px;
+    color: #696969;
+    margin-bottom: 4px;
+  }
+
+
+  /**
     * Loading message styles and animation
     */
   .loading {
@@ -132,6 +197,7 @@
     }
   }
 
+
   /**
    * Dialog-specific styles
    */
@@ -148,7 +214,7 @@
     border: none;
   }
 
-
+  
   /**
     * Formatting utilities
     */
