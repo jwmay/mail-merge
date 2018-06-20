@@ -31,10 +31,13 @@
   /**
   * Helper function for displaying the loading message on the user-interface
   * display.
+  * 
+  * @param {string} message The message to display with the loader.
+  *     Default is 'Loading...'.
   */
-  function showLoading() {
+  function showLoading(message) {
     var display = new Display();
-    display.showLoading();
+    display.showLoading(message);
   }
 
 
@@ -72,6 +75,29 @@
 
 
   /**
+   * Scroll the page to the given id.
+   * 
+   * @param {string} id The id of the element to scroll to.
+   */
+  function scrollTo(id){
+    var element = $(id);
+    $('html,body').animate({scrollTop: element.offset().top},'slow');
+  }
+
+
+  /**
+   * Sleep the script for the given number of milliseconds.
+   * 
+   * @param {integer} time The time to sleep in milliseconds (ms).
+   */
+  function sleep(time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+  }
+
+
+
+
+  /**
   * Base class for controlling the user interface display on the sidebar or
   * dialogs.
   */
@@ -80,6 +106,7 @@
     this.content = $('#content');
     this.loading = $('#loading');
     this.loadingOverlay = $('#loading-overlay');
+    this.loadingMessage = $('#loading-message');
   };
 
 
@@ -139,8 +166,13 @@
 
   /**
   * Shows the loading overlay on the display.
+  * 
+  * @param {string} message The message to display with the loader.
+  *     Default is 'Loading...'.
   */
-  Display.prototype.showLoading = function() {
+  Display.prototype.showLoading = function(message) {
+    message = (message === undefined ? 'Loading...' : message);
+    this.loadingMessage.html(message);
     this.loading.removeClass('hidden');
     this.loadingOverlay.removeClass('hidden');
   };
