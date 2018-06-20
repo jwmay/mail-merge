@@ -28,6 +28,6 @@
  */
 function provideEnvironmentConfiguration_(configuration) {
   configuration.debug = true;
-  configuration.outputFileId = '1C80otET2O_o3OXpxpolIwymQzptRM5hxX2HgKiSYqBQ';
+  configuration.outputFileId = '';
   return configuration;
 }
