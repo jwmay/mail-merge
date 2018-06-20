@@ -90,7 +90,7 @@ function selectSpreadsheet_onClick() {
  * Handles the 'Run merge' button click response.
  */
 function runMerge_onClick() {
-  showLoading();
+  showLoading('Merging...');
   clearDisplay('alerts');
   google.script.run
     .withSuccessHandler(updateDisplay)
