@@ -6,11 +6,12 @@ Refactoring considerations - A Rough "Style" Guide
 Features
 --------
 
-  * advanced options to disable 'fast letter merge' which uses table wrappers
   * option to choose output type: Google Doc or PDF; single file or multi-file
   * option to input a custom output file name
   * option to setup batches
   * option to specify a start and end row
+  * add Batch class for handling batches of records (be sure to preserve any
+    copied/appended objects (i.e., table-wrapped body) to reduce server calls)
   * email support (?)
 
 --------
