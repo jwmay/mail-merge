@@ -35,13 +35,11 @@ function runMerge() {
  */
 var Merge = function() {
   this.config = Configuration.getCurrent();
+  this.options = getOptions(true);
+
   this.spreadsheet = new DataSpreadsheet();
   this.template = new TemplateDocument();
   this.output = {};
-
-  // Get the options for controlling the merge
-  var opts = new Options();
-  this.options = opts.getOptions();
 };
 
 
@@ -75,12 +73,27 @@ Merge.prototype.extractElements = function(container) {
 Merge.prototype.getOutputDocument = function() {
   var fileId = '';
   if (this.config.debug === false || (this.config.debug === true && this.config.outputFileId === '')) {
-    var fileName = this.config.outputFileNamePrefix + this.template.getName();
+    var fileName = this.getOutputDocumentFileName();
     fileId = this.template.makeCopy(fileName);
   } else {
     fileId = this.config.outputFileId;
   }
   return new OutputDocument(fileId);
+};
+
+
+/**
+ * Returns the file name to be applied to the output document.
+ * 
+ * @returns {string} The output file name.
+ */
+Merge.prototype.getOutputDocumentFileName = function() {
+  // If the user did not specify a file name, use the default
+  if (this.options.outputFileName === '') {
+    return this.config.outputFileNamePrefix + this.template.getName();
+  } else {
+    return this.options.outputFileName;
+  }
 };
 
 
