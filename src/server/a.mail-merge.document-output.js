@@ -25,11 +25,11 @@
  * @param {string} id The id of the output document.
  */
 var OutputDocument = function(id) {
+  this.config = Configuration.getCurrent();
   this.id = id;
   this.document = this.getDocument();
   this.body = this.document.getBody();
   this.bodyCopy = this.body.copy();
-  this.config = Configuration.getCurrent();
 };
 
 

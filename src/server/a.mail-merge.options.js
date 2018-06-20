@@ -14,9 +14,28 @@
 
 
 /**
- * Class for handling and storing user-defined script options.
+ * Helper function for returning an object containing the values of all options.
+ * 
+ * @param {boolean} setDefault If true, set default options. Default is false.
+ * @returns {object} The names and values of all options.
  */
-var Options = function() {
+function getOptions(setDefualt) {
+  var opts = new Options(setDefualt);
+  return opts.getOptions();
+}
+
+
+/**
+ * Class for handling and storing user-defined script options.
+ * 
+ * The optional setDefault parameter is used to perform a check for the options
+ * and set default values for any unset options. This should only be done the
+ * first time the options are called.
+ * 
+ * @param {boolean} setDefault If true, set default options. Default is false.
+ */
+var Options = function(setDefault) {
+  setDefault = (setDefault === undefined ? false : true);
   this.storage = new PropertyStore();
   this.defaultOptions = {
     mergeType: 'letters',
@@ -25,7 +44,7 @@ var Options = function() {
     numOutputFiles: 'single',
     tableWrapMerge: 'enable',
   };
-  this.setDefaultOptions();
+  if (setDefault === true) this.setDefaultOptions();
 };
 
 

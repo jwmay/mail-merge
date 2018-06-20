@@ -46,7 +46,8 @@ function saveMergeOptions(options) {
  * Class for creating the options dialog display.
  */
 var OptionsDisplay = function() {
-  this.options = new Options();
+  this.opts = new Options();
+  this.options = this.opts.getOptions();
 };
 
 
@@ -56,14 +57,13 @@ var OptionsDisplay = function() {
  * @returns {DisplayObject} A DisplayObject instance for the advanced options.
  */
 OptionsDisplay.prototype.getAdvancedOptionsDisplay = function() {
-  var options = this.options.getOptions();
   var selected = {
-    filename: (options.outputFileName !== '' ? options.outputFileName: ''),
-    googleDoc: (options.outputFileType === 'google_doc' ? 'selected' : ''),
-    pdf: (options.outputFileType === 'pdf' ? 'selected' : ''),
-    singleFile: (options.numOutputFiles === 'single' ? 'checked' : ''),
-    multiFile: (options.numOutputFiles === 'multi' ? 'checked' : ''),
-    tableWrapMerge: (options.tableWrapMerge === 'enable' ? 'checked' : ''),
+    filename: (this.options.outputFileName !== '' ? this.options.outputFileName: ''),
+    googleDoc: (this.options.outputFileType === 'google_doc' ? 'selected' : ''),
+    pdf: (this.options.outputFileType === 'pdf' ? 'selected' : ''),
+    singleFile: (this.options.numOutputFiles === 'single' ? 'checked' : ''),
+    multiFile: (this.options.numOutputFiles === 'multi' ? 'checked' : ''),
+    tableWrapMerge: (this.options.tableWrapMerge === 'enable' ? 'checked' : ''),
   };
   var content = '' +
       '<div id="advancedOptions" class="option hidden">' +
@@ -138,10 +138,9 @@ OptionsDisplay.prototype.getAdvancedOptionsDisplay = function() {
  * @returns {DisplayObject} A DisplayObject instance for the selector.
  */
 OptionsDisplay.prototype.getMergeTypeSelector = function() {
-  var mergeType = this.options.getOption('mergeType');
   var selected = {
-    letters: (mergeType == 'letters' ? 'selected' : ''),
-    labels: (mergeType == 'labels' ? 'selected' : '')
+    letters: (this.options.mergeType == 'letters' ? 'selected' : ''),
+    labels: (this.options.mergeType == 'labels' ? 'selected' : '')
   };
   var content = '' +
       '<div class="option">' +
@@ -221,6 +220,6 @@ OptionsDisplay.prototype.getSaveOptionsDisplay = function() {
  */
 OptionsDisplay.prototype.saveMergeOptions = function(options) {
   for (var option in options) {
-    this.options.setOption(option, options[option]);
+    this.opts.setOption(option, options[option]);
   }
 };
