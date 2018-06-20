@@ -34,6 +34,12 @@ $(function() {
   $(document).on('click', '#optionsCancel', function() {
     cancelOptions_onClick();
   });
+
+  // Handle the advanced options button click
+  $(document).on('click', '#optionsAdvanced', function() {
+    $('#advancedOptions').toggleClass('hidden');
+    scrollTo('#advancedOptions');
+  });
 });
 
 
@@ -43,8 +49,8 @@ $(function() {
  */
 function initialize() {
   google.script.run
-    .withSuccessHandler(updateDisplay)
-    .getOptionsDisplay();
+      .withSuccessHandler(updateDisplay)
+      .getOptionsDisplay();
 }
 
 
@@ -52,10 +58,20 @@ function initialize() {
  * Handles the 'Save options' button click response.
  */
 function saveOptions_onClick() {
-  var options = {};
-  options.mergeType = $('#mergeType').children('.selected').attr('id');
-  google.script.run.saveMergeOptions(options);
-  google.script.host.close();
+  showLoading('Saving...');
+  var options = {
+    mergeType: $('#mergeType').children('.selected').attr('id'),
+    outputFileName: $('#outputFileName').val(),
+    outputFileType: $('#outputFileType option:selected').val(),
+    numOutputFiles: $('input[name="numOutputFiles"]:checked').val(),
+    tableWrapMerge: ($('#tableWrapMerge').prop('checked') === true ? 'enable' : 'disable'),
+  };
+  clearDisplay();
+  google.script.run
+      .withSuccessHandler(function() {
+        google.script.host.close();
+      })
+      .saveMergeOptions(options);
 }
 
 

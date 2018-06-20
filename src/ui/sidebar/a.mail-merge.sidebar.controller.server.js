@@ -204,7 +204,7 @@ function getRunMergeDisplay() {
  * merge options.
  */
 function showMergeOptions() {
-  showDialog('a.mail-merge.options.view', 400, 266, 'Merge options');
+  showDialog('a.mail-merge.options.view', 500, 390, 'Merge options');
 }
 
 

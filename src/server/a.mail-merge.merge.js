@@ -39,12 +39,9 @@ var Merge = function() {
   this.template = new TemplateDocument();
   this.output = {};
 
-  // @todo Create an Options class and have this.options.mergeType as a single
-  //    call to eliminate this mess
-  this.storage = new PropertyStore();
-  this.mergeType = this.storage.getProperty('mergeType');
-  // this.mergeLetterMethod = this.storage.getProperty('mergeLetterMethod');
-  this.mergeLetterMethod = 'table-wrapped';
+  // Get the options for controlling the merge
+  var opts = new Options();
+  this.options = opts.getOptions();
 };
 
 
@@ -112,10 +109,10 @@ Merge.prototype.runMerge = function() {
   }
 
   // Run the selected merge type, or return an error DisplayObject instance
-  if (this.mergeType === 'letters') {
+  if (this.options.mergeType === 'letters') {
     // Allow user to select letter merge method; slower method may better
     // preserve formatting if the table-wrapped method cannot
-    if (this.mergeLetterMethod === 'table-wrapped') {
+    if (this.options.tableWrapMerge === 'enable') {
       // Warn the user if the template has a blank line, which will not format
       // correctly in the output via the table-wrapped method; the blank line
       // needs a space character
@@ -141,7 +138,7 @@ Merge.prototype.runMerge = function() {
     } else {
       error = this.runLetterMerge(records, fields);
     }
-  } else if (this.mergeType === 'labels') {
+  } else if (this.options.mergeType === 'labels') {
     error = this.runLabelMerge(records, fields);
   } else {
     var message = 'An unsupported merge type was selected.';

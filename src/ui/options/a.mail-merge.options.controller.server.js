@@ -14,19 +14,116 @@
 
 
 /**
- * Returns an array of DisplayObject instances for all options to be displayed
- * in the dialog. Includes a display for the save and cancel buttons.
+ * Returns an array of DisplayObject instances for creating the options dialog.
+ * 
+ * This is a helper function called from the client by google.script.run.
  * 
  * @returns {DisplayObjects[]} An array of DisplayObject instances.
  */
 function getOptionsDisplay() {
-  setDefaultOptions();
-  var displays = [
-    getMergeTypeSelector(),
-    getSaveOptionsDisplay()
-  ];
-  return displays;
+  var optionsDisplay = new OptionsDisplay();
+  return optionsDisplay.getOptionsDisplay();
 }
+
+
+/**
+ * Stores all of the options provided in options parameter. Options must be
+ * stored as key/value pairs in an object where the option name is the key.
+ * 
+ * This is a helper function called from the client by google.script.run.
+ * 
+ * @param {object} options An object of key/value pairs where the option name
+ *    is the key.
+ */
+function saveMergeOptions(options) {
+  var optionsDisplay = new OptionsDisplay();
+  optionsDisplay.saveMergeOptions(options);
+}
+
+
+
+/**
+ * Class for creating the options dialog display.
+ */
+var OptionsDisplay = function() {
+  this.options = new Options();
+};
+
+
+/**
+ * Returns an instance of DisplayObject containing the advanced options.
+ * 
+ * @returns {DisplayObject} A DisplayObject instance for the advanced options.
+ */
+OptionsDisplay.prototype.getAdvancedOptionsDisplay = function() {
+  var options = this.options.getOptions();
+  var selected = {
+    filename: (options.outputFileName !== '' ? options.outputFileName: ''),
+    googleDoc: (options.outputFileType === 'google_doc' ? 'selected' : ''),
+    pdf: (options.outputFileType === 'pdf' ? 'selected' : ''),
+    singleFile: (options.numOutputFiles === 'single' ? 'checked' : ''),
+    multiFile: (options.numOutputFiles === 'multi' ? 'checked' : ''),
+    tableWrapMerge: (options.tableWrapMerge === 'enable' ? 'checked' : ''),
+  };
+  var content = '' +
+      '<div id="advancedOptions" class="option hidden">' +
+        '<form>' +
+          '<h3>Advanced Options</h3>' +
+          '<div class="form-group">' +
+            '<label for="outputFileName">' +
+              'Output File Name' +
+              '<span class="help-text">Specify an output file name to override the default shown below.</span>' +
+            '</label>' +
+            '<input type="text" class="form-control" id="outputFileName" placeholder="[Merge Output] Simply Mail Merge - Dev - Letter Template with Header" value="' + selected.filename + '">' +
+          '</div>' +
+          '<div class="form-row">' +
+            '<div class="form-group">' +
+              '<label for="outputFileType">' +
+                'Output File Type' +
+                '<span class="help-text">Select the type of output file to generate.</span>' +
+              '</label>' +
+              '<select class="form-control" id="outputFileType">' +
+                '<option value="google_doc" ' + selected.googleDoc + '>Google Doc</option>' +
+                '<option value="pdf" ' + selected.pdf + '>PDF</option>' +
+              '</select>' +
+            '</div>' +
+            '<div class="form-group">' +
+              '<h4 class="form-check-header">Output Files</h4>' +
+              '<span class="help-text">Select the number of output files to generate.</span>' +
+              '<div class="form-check">' +
+                '<input class="form-check-input" type="radio" name="numOutputFiles" id="numOutputFilesSingle" value="single" ' + selected.singleFile + '>' +
+                '<label class="form-check-label" for="numOutputFilesSingle">' +
+                  'Single file' +
+                  '<span class="help-text">One file will be created with all records</span>' +
+                '</label>' +
+              '</div>' +
+              '<div class="form-check">' +
+                '<input class="form-check-input" type="radio" name="numOutputFiles" id="numOutputFilesMulti" value="multi" ' + selected.multiFile + '>' +
+                '<label class="form-check-label" for="numOutputFilesMulti">' +
+                  'Multiple files' +
+                  '<span class="help-text">One file will be created for each record</span>' +
+                '</label>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="form-group">' +
+            '<h4 class="form-check-header">Letter Merge Method</h4>' +
+            '<span class="help-text">' +
+              'Uncheck to disable this method of speeding up letter merges, which places the ' +
+              'output into tables with no padding or border. Disabling this should only be needed ' +
+              'when the formatting of the output document fails to match that of the template document.' +
+            '</span>' +
+            '<div class="form-check">' +
+              '<input class="form-check-input" type="checkbox" value="tableWrapMergeEnable" id="tableWrapMerge" ' + selected.tableWrapMerge + '>' +
+              '<label class="form-check-label" for="tableWrapMerge">' +
+                'Speed up letter merge' +
+              '</label>' +
+            '</div>' +
+          '</div>' +
+        '</form>' +
+      '</div>';
+  return getDisplayObject('card', content, 'advancedOptionsDisplay', 'bottom');
+};
 
 
 /**
@@ -40,9 +137,8 @@ function getOptionsDisplay() {
  * 
  * @returns {DisplayObject} A DisplayObject instance for the selector.
  */
-function getMergeTypeSelector() {
-  var storage = new PropertyStore();
-  var mergeType = storage.getProperty('mergeType');
+OptionsDisplay.prototype.getMergeTypeSelector = function() {
+  var mergeType = this.options.getOption('mergeType');
   var selected = {
     letters: (mergeType == 'letters' ? 'selected' : ''),
     labels: (mergeType == 'labels' ? 'selected' : '')
@@ -58,7 +154,7 @@ function getMergeTypeSelector() {
           '<div class="selector-content">' +
             '<h4 class="selector-title">Letters</h4>' +
             '<p class="selector-description">' +
-              'Letters will create a new copy of the template for each record' +
+              'Letters will create a new copy of the template for each record ' +
               'in the spreadsheet.' +
             '</p>' +
           '</div>' +
@@ -70,17 +166,31 @@ function getMergeTypeSelector() {
           '<div class="selector-content">' +
             '<h4 class="selector-title">Labels</h4>' +
             '<p class="selector-description">' +
-              'Labels require the template contain a single table with any' +
-              'number of identical cells, where each cell represents a' +
+              'Labels require the template contain a single table with any ' +
+              'number of identical cells, where each cell represents a ' +
               'different record in the spreadsheet.' +
             '</p>' +
           '</div>' +
         '</li>' +
       '</ul>' +
     '</div>';
-  var display = getDisplayObject('card', content, 'mergeTypeSelector', 'bottom');
-  return display;
-}
+  return getDisplayObject('card', content, 'mergeTypeSelector', 'bottom');
+};
+
+
+/**
+ * Returns an array containing all of the DisplayObject instances for creating
+ * the options dialog display.
+ * 
+ * @returns {DisplayObject[]} An array of DisplayObject instances.
+ */
+OptionsDisplay.prototype.getOptionsDisplay = function() {
+  return [
+    this.getMergeTypeSelector(),
+    this.getAdvancedOptionsDisplay(),
+    this.getSaveOptionsDisplay(),
+  ];
+};
 
 
 /**
@@ -88,17 +198,18 @@ function getMergeTypeSelector() {
  * 
  * @returns {DisplayObject} A DisplayObject instance for the buttons.
  */
-function getSaveOptionsDisplay() {
+OptionsDisplay.prototype.getSaveOptionsDisplay = function() {
   var content = '' +
       '<div class="btn-bar">' +
         '<input type="button" class="btn action" value="Save options" ' +
-          'id="optionsSave">' +
-        '<input type="button" class="btn" value="Cancel" ' +
-          'id="optionsCancel">' +
+            'id="optionsSave">' +
+        '<input type="button" class="btn" value="Cancel" id="optionsCancel">' +
+        '<input type="button" class="btn btn-link" value="Advanced options" ' +
+            'id="optionsAdvanced">' +
       '</div>';
   var dislpay = getDisplayObject('card', content, 'saveOptionsDisplay', 'bottom');
   return dislpay;
-}
+};
 
 
 /**
@@ -108,23 +219,8 @@ function getSaveOptionsDisplay() {
  * @param {object} options An object of key/value pairs where the option name
  *    is the key.
  */
-function saveMergeOptions(options) {
-  var storage = new PropertyStore();
+OptionsDisplay.prototype.saveMergeOptions = function(options) {
   for (var option in options) {
-    storage.setProperty(option, options[option]);
+    this.options.setOption(option, options[option]);
   }
-}
-
-
-/**
- * Checks if an option is saved and sets a default option if there is no
- * saved value.
- */
-function setDefaultOptions() {
-  var storage = new PropertyStore();
-
-  // Set default merge type to 'letters' if no option is set
-  var mergeType = storage.getProperty('mergeType');
-  if (mergeType === null) mergeType = 'letters';
-  storage.setProperty('mergeType', mergeType);
-}
+};
