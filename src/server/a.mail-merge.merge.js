@@ -158,15 +158,33 @@ Merge.prototype.runMerge = function() {
     error = getDisplayObject('alert-error', message);
   }
 
-  // Return an error DisplayObject if the merge failed for any given record
-  if (error !== null) return error;
+  if (error === null) {
+    // Apply the changes to the output document if no merge error
+    this.output.applyChanges();
 
-  // Return a success message with a link to the output document
-  var url = this.output.getUrl();
-  var content = '' +
-      'Merge complete! ' +
-      '<a href="' + url + '">Click here</a> to open the output document.';
-  return getDisplayObject('alert-success', content);
+    // Set the url for display in the success message
+    var url = this.output.getUrl();
+
+    // Convert output file to PDF if option is selected
+    if (this.options.outputFileType === 'pdf') {
+      var outputDocumentBlob = this.output.document
+          .getAs('application/pdf')
+          .setName(this.output.document.getName() + '.pdf');
+      var outputFolder = this.template.getParentFolder();    
+      var outputPdfFile = outputFolder.createFile(outputDocumentBlob);
+      this.output.deleteFile();
+      url = outputPdfFile.getUrl();
+    }
+
+    // Return a success message with a link to the output document
+    var content = '' +
+        'Merge complete! ' +
+        '<a href="' + url + '">Click here</a> to open the output document.';
+    return getDisplayObject('alert-success', content);
+  } else {
+    // Return an error DisplayObject if the merge failed
+    return error;
+  }
 };
 
 

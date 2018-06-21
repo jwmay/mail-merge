@@ -105,6 +105,21 @@ TemplateDocument.prototype.getNumTables = function() {
 
 
 /**
+ * Returns the parent folder of the template file.
+ * 
+ * Files can be in more than one folder. This method only returns the first
+ * parent folder containing the file. This is determined alphabetically.
+ * 
+ * @returns {Folder} The parent folder.
+ */
+TemplateDocument.prototype.getParentFolder = function() {
+  var id = this.getId();
+  var file = DriveApp.getFileById(id);
+  return file.getParents().next();
+};
+
+
+/**
  * Returns a detached, deep copy of the first table in the document.
  * 
  * Any child elements present in the element are also copied. The new element

@@ -25,11 +25,21 @@
  * @param {string} id The id of the output document.
  */
 var OutputDocument = function(id) {
-  this.config = Configuration.getCurrent();
   this.id = id;
   this.document = this.getDocument();
   this.body = this.document.getBody();
   this.bodyCopy = this.body.copy();
+  
+  this.config = Configuration.getCurrent();
+};
+
+
+/**
+ * Applies the changes to the output document by closing and opening the file.
+ */
+OutputDocument.prototype.applyChanges = function() {
+  this.closeFile();
+  this.openFile();
 };
 
 
@@ -43,6 +53,27 @@ OutputDocument.prototype.clearBody = function() {
 
 
 /**
+ * Saves the output document. Causes pending updates to be flushed and applied.
+ * 
+ * The closed document cannot be edited. Use the openFile method to reopen the
+ * document for editing.
+ */
+OutputDocument.prototype.closeFile = function() {
+  this.document.saveAndClose();
+};
+
+
+
+/**
+ * Places the output Google Doc file in the user's trash.
+ */
+OutputDocument.prototype.deleteFile = function() {
+  this.document.saveAndClose();
+  DriveApp.getFileById(this.id).setTrashed(true);
+};
+
+
+/**
  * Returns a detached, deep copy of the body element.
  * 
  * Any child elements present in the element are also copied. The new element
@@ -51,8 +82,7 @@ OutputDocument.prototype.clearBody = function() {
  * @returns {Body} A copy of the body.
  */
 OutputDocument.prototype.getBodyCopy = function() {
-  var bodyCopy = this.bodyCopy.copy();
-  return bodyCopy;
+  return this.bodyCopy.copy();
 };
 
 
@@ -63,8 +93,7 @@ OutputDocument.prototype.getBodyCopy = function() {
  * @returns {Document} The output document.
  */
 OutputDocument.prototype.getDocument = function() {
-  var document = DocumentApp.openById(this.id);
-  return document;
+  return DocumentApp.openById(this.id);
 };
 
 
@@ -81,8 +110,7 @@ OutputDocument.prototype.getDocument = function() {
  * @returns {Table} A copy of the first table in the document.
  */
 OutputDocument.prototype.getTableCopy = function() {
-  var tableCopy = this.bodyCopy.getTables()[0].copy();
-  return tableCopy;
+  return this.bodyCopy.getTables()[0].copy();
 };
 
 
@@ -92,8 +120,7 @@ OutputDocument.prototype.getTableCopy = function() {
  * @returns {string} The url of the output document.
  */
 OutputDocument.prototype.getUrl = function() {
-  var url = this.document.getUrl();
-  return url;
+  return this.document.getUrl();
 };
 
 
@@ -107,8 +134,7 @@ OutputDocument.prototype.hasHeader = function() {
   var header = this.document.getHeader();
   if (this.config.debug) log('  * Header: ' + header + ' *');
   // var headerText = header.findElement(DocumentApp.ElementType.PARAGRAPGH);
-  var headerText = header.appendParagraph('This is just a test.');
-  return headerText;
+  return header.appendParagraph('This is just a test.');
 };
 
 
@@ -142,6 +168,17 @@ OutputDocument.prototype.insertNewPage = function(content, page) {
 
   // Only add a page break if it is not the last new page to be added
   if (page.last === false) this.body.appendPageBreak();
+};
+
+
+/**
+ * Opens the output document for editing.
+ * 
+ * This method should be used after the closeFile method to reopen the document
+ * for editing.
+ */
+OutputDocument.prototype.openFile = function() {
+  this.document = DocumentApp.openById(this.id);
 };
 
 
