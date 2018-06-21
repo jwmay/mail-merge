@@ -6,6 +6,10 @@ Refactoring considerations - A Rough "Style" Guide
 Features
 --------
 
+  * can we do a progress bar using the CacheService and Cache classes? Save
+    progress to the cache from the merge functions and run a client-side while
+    loop updating progress stored in the cache (the loop would continue until a
+    flag is set to false after the execution of the merge function)
   * option to choose output type: Google Doc or PDF; single file or multi-file
   * option to input a custom output file name
   * option to setup batches
