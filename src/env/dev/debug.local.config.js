@@ -28,6 +28,6 @@
  */
 function provideEnvironmentConfiguration_(configuration) {
   configuration.debug = true;
-  configuration.outputFileId = '';
+  configuration.outputFileId = ''; // leave blank to create a new output document
   return configuration;
 }
