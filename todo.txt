@@ -14,6 +14,8 @@ Features
   * option to input a custom output file name
   * option to setup batches
   * option to specify a start and end row
+  * option to save output file(s) in as specific Google Drive folder (default
+    now is to save in parent folder of the template document)
   * add Batch class for handling batches of records (be sure to preserve any
     copied/appended objects (i.e., table-wrapped body) to reduce server calls)
   * email support (?)
