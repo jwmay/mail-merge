@@ -31,6 +31,7 @@ var OutputDocument = function(id) {
   this.bodyCopy = this.body.copy();
   
   this.config = Configuration.getCurrent();
+  this.options = getOptions();
 };
 
 
@@ -163,11 +164,17 @@ OutputDocument.prototype.insertNewPage = function(content, page) {
     }
   }
   
-  // Remove the empty paragraph at the beginning of the document
-  if (page.first === true) this.body.getChild(0).removeFromParent();
+  // Remove the empty paragraph at the beginning of the document or if the
+  // multi-file option is selected
+  if (page.first === true || this.options.numOutputFiles === 'multi') {
+    this.body.getChild(0).removeFromParent();
+  }
 
-  // Only add a page break if it is not the last new page to be added
-  if (page.last === false) this.body.appendPageBreak();
+  // Only add a page break if it is not the last new page to be added and the
+  // multi-file option is not selected
+  if (page.last === false && this.options.numOutputFiles === 'single') {
+    this.body.appendPageBreak();
+  }
 };
 
 
@@ -235,6 +242,11 @@ OutputDocument.prototype.shiftMargins = function() {
  * @param {Element[]} content An array of elements to insert.
  */
 var BodyWrapper = function(body, content) {
+  this.options = getOptions();
+
+  // Use a copy of the output body to create table element; Google only allows
+  // elements to be created by appending or inserting them into an already-
+  // existing element
   this.body = body.copy().clear();
   this.topParagraph = this.body.getChild(0);
   this.table = this.body.appendTable();
@@ -289,12 +301,16 @@ BodyWrapper.prototype.appendWrappedBody = function(body, page) {
   // Remove the default empty paragraph Google adds after a table
   tableParagraph.removeFromParent();
 
-  // Remove the empty paragraph at the beginning of the document
-  if (page.first === true) body.getChild(0).removeFromParent();
+  // Remove the empty paragraph at the beginning of the document or if the
+  // multi-file option is selected
+  if (page.first === true || this.options.numOutputFiles === 'multi') {
+    body.getChild(0).removeFromParent();
+  }
 
-  // Only add a page break if it is not the last new page to be added; also
-  // remove the extra paragraph element after the table
-  if (page.last === false) {
+  // Only add a page break if it is not the last new page to be added and the
+  // multi-file option is not selected; also remove the extra paragraph element
+  // after the table
+  if (page.last === false && this.options.numOutputFiles === 'single') {
     body.appendPageBreak().getParent().getPreviousSibling().removeFromParent();
   }
 };

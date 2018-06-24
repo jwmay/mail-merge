@@ -35,10 +35,14 @@ function runMerge() {
  */
 var Merge = function() {
   this.config = Configuration.getCurrent();
-  this.options = getOptions(true);
+  this.options = getOptions();
 
   this.spreadsheet = new DataSpreadsheet();
   this.template = new TemplateDocument();
+  this.outputFiles = [];
+  this.outputUrl = '';
+
+  // @deprecated
   this.output = {};
 };
 
@@ -92,6 +96,7 @@ Merge.prototype.getOutputDocumentFileName = function() {
   if (this.options.outputFileName === '') {
     return this.config.outputFileNamePrefix + this.template.getName();
   } else {
+    // @todo need to filter the given filename to replace merge fields
     return this.options.outputFileName;
   }
 };
@@ -159,27 +164,35 @@ Merge.prototype.runMerge = function() {
   }
 
   if (error === null) {
-    // Apply the changes to the output document if no merge error
-    this.output.applyChanges();
+    // Loop over each output file saved from a label or letter merge
+    for (var i = 0; i < this.outputFiles.length; i++) {
+      var output = this.outputFiles[i];
 
-    // Set the url for display in the success message
-    var url = this.output.getUrl();
+      // Apply the changes to the output document if no merge error
+      output.applyChanges();
 
-    // Convert output file to PDF if option is selected
-    if (this.options.outputFileType === 'pdf') {
-      var outputDocumentBlob = this.output.document
-          .getAs('application/pdf')
-          .setName(this.output.document.getName() + '.pdf');
-      var outputFolder = this.template.getParentFolder();    
-      var outputPdfFile = outputFolder.createFile(outputDocumentBlob);
-      this.output.deleteFile();
-      url = outputPdfFile.getUrl();
+      // Set the url for display in the success message
+      this.outputUrl = output.getUrl();
+      log('this.outputUrl: ' + this.outputUrl);
+
+      // Convert output file to PDF if option is selected
+      if (this.options.outputFileType === 'pdf') {
+        var outputDocumentBlob = output.document
+            .getAs('application/pdf')
+            .setName(output.document.getName() + '.pdf');
+        var outputFolder = this.template.getParentFolder();    
+        var outputPdfFile = outputFolder.createFile(outputDocumentBlob);
+        output.deleteFile();
+        this.outputUrl = outputPdfFile.getUrl();
+      }
     }
 
     // Return a success message with a link to the output document
     var content = '' +
         'Merge complete! ' +
-        '<a href="' + url + '">Click here</a> to open the output document.';
+        '<a href="' + this.outputUrl + '">' +
+          'Click here' +
+        '</a> to open the output document.';
     return getDisplayObject('alert-success', content);
   } else {
     // Return an error DisplayObject if the merge failed
@@ -204,8 +217,8 @@ Merge.prototype.runLabelMerge = function(records, fields) {
   // Label merges only work when the template document has one table
   if (numTables === 1) {
     // The output document is only created if we can perform a merge
-    this.output = this.getOutputDocument();
-    this.output.clearBody();
+    var output = this.getOutputDocument();
+    output.clearBody();
 
     // Use to determine the current row and column positions for each cell of
     // the output table; contains max number of rows and columns in the table
@@ -216,7 +229,7 @@ Merge.prototype.runLabelMerge = function(records, fields) {
     // in the table cells would show up as blank images (likely due to an image
     // source error). Retrieving copies directly from the output document (which
     // is created as a copy of the template document file) preserves the images.
-    var tableCopy = this.output.getTableCopy();
+    var tableCopy = output.getTableCopy();
     
     var tableNum = 0; // count the number of appended tables
     var numRecords = this.spreadsheet.getRecordCount();
@@ -243,7 +256,7 @@ Merge.prototype.runLabelMerge = function(records, fields) {
         // Tables must have a paragraph before and after them, this ensures the
         // table appears in the same position on every page of the document
         if (tableNum !== 0) {
-          this.output.body.appendParagraph('');
+          output.body.appendParagraph('');
         }
         
         // Clear any unused cells in the last row of the table
@@ -263,11 +276,14 @@ Merge.prototype.runLabelMerge = function(records, fields) {
         }
         
         // Append the table, get a new table copy, and update the table counter
-        this.output.body.appendTable(tableCopy);
-        tableCopy = this.output.getTableCopy();
+        output.body.appendTable(tableCopy);
+        tableCopy = output.getTableCopy();
         tableNum += 1;
       }
     }
+
+    // Save the output document to an object property array for final processing
+    this.outputFiles.push(output);
     
     // No errors so return null
     return null;
@@ -300,8 +316,8 @@ Merge.prototype.runLabelMerge = function(records, fields) {
  *    a DisplayObject instance with an error message.
  */
 Merge.prototype.runLetterMerge = function(records, fields) {
-  this.output = this.getOutputDocument();
-  this.output.clearBody();
+  var output = this.getOutputDocument();
+  output.clearBody();
 
   // Loop over each record in the data spreadsheet and add it to the output
   var numRecords = this.spreadsheet.getRecordCount();
@@ -322,11 +338,24 @@ Merge.prototype.runLetterMerge = function(records, fields) {
       first: (recordNum === 1 ? true : false),
       last: (recordNum === numRecords ? true : false),
     };
-    this.output.insertNewPage(bodyElements, page);
-  }
+    output.insertNewPage(bodyElements, page);
 
-  // Remove the extra empty paragraph elements added after each table
-  this.output.removeTableParagraphs();
+    // Process and save the current output file if multi-file option selected
+    // or if on the last page of a single-file output
+    if (this.options.numOutputFiles === 'multi' || page.last === true) {
+      // Remove the extra empty paragraph elements added after each table
+      output.removeTableParagraphs();
+      
+      // Save the output document to an object property array for final processing
+      this.outputFiles.push(output);
+    }
+
+    // Create new output file if multi-file selected and not on last record
+    if (this.options.numOutputFiles === 'multi' && page.last === false) {
+      output = this.getOutputDocument();
+      output.clearBody();
+    }
+  }
 
   // No errors so return null
   return null;
@@ -350,14 +379,14 @@ Merge.prototype.runLetterMerge = function(records, fields) {
  *    a DisplayObject instance with an error message.
  */
 Merge.prototype.runTableWrappedLetterMerge = function(records, fields) {
-  this.output = this.getOutputDocument();
-  this.output.clearBody();
-  this.output.shiftMargins();
+  var output = this.getOutputDocument();
+  output.clearBody();
+  output.shiftMargins();
 
   // Wrap the content of the template body into a table cell to speed up the
   // merge process by minimizing the number of append calls to the output
   var bodyElements = this.extractElements(this.template.getBodyCopy());
-  var bodyWrapper = new BodyWrapper(this.output.body, bodyElements);
+  var bodyWrapper = new BodyWrapper(output.body, bodyElements);
 
   // Loop over each record in the data spreadsheet and add it to the output
   var numRecords = this.spreadsheet.getRecordCount();
@@ -378,7 +407,28 @@ Merge.prototype.runTableWrappedLetterMerge = function(records, fields) {
       first: (recordNum === 1 ? true : false),
       last: (recordNum === numRecords ? true : false),
     };
-    bodyWrapper.appendWrappedBody(this.output.body, page);
+    bodyWrapper.appendWrappedBody(output.body, page);
+
+    // Save the current output file if multi-file option selected or if on the
+    // last page of a single-file output
+    if (this.options.numOutputFiles === 'multi' || page.last === true) {
+      this.outputFiles.push(output);
+    }
+
+    // Create new output file if multi-file selected and not on last record
+    if (this.options.numOutputFiles === 'multi' && page.last === false) {
+      output = this.getOutputDocument();
+      output.clearBody();
+      output.shiftMargins();
+
+      // Need to extract new elements and create a new body wrapper due to issue
+      // with images not showing up in all records but the first (only guess at
+      // this time is an issue with Google Apps Script); this will hurt the cost
+      // savings with the table-wrapped method as it now makes as many server-
+      // side append calls as the non-table-wrapped method
+      bodyElements = this.extractElements(this.template.getBodyCopy());
+      bodyWrapper = new BodyWrapper(output.body, bodyElements);
+    }
   }
 
   // No errors so return null
