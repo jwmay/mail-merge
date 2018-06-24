@@ -32,7 +32,7 @@ function onInstall(e) {
  */
 function onOpen(e) {
   var config = Configuration.getCurrent();
-  
+
   // Add the plugin add-on menu to the user interface with additional menues
   // available only in debug mode.
   var ui = DocumentApp.getUi()
@@ -56,6 +56,10 @@ function onOpen(e) {
  * primary user interface.
  */
 function onShowSidebar() {
+  // Set default options (only performs this if there are no options set);
+  // cannot perform in onOpen due to Google's restriction to property store
+  var options = new Options();
+  options.setDefaultOptions();
   showSidebar('a.mail-merge.sidebar.view', 'Simply Mail Merge');
 }
 
