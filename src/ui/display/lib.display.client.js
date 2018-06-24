@@ -171,7 +171,7 @@
   *     Default is 'Loading...'.
   */
   Display.prototype.showLoading = function(message) {
-    message = (message === undefined ? 'Loading...' : message);
+    message = (typeof message === 'undefined' ? 'Loading...' : message);
     this.loadingMessage.html(message);
     this.loading.removeClass('hidden');
     this.loadingOverlay.removeClass('hidden');

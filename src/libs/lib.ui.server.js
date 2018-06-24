@@ -125,16 +125,16 @@ function showSidebar(source, title) {
 function makeSelect(options, message, value, id, classes) {
   // Default parameters are not supported by GAS server code, so define the
   // optional variables here if they are not defined
-  message = message === undefined ? 'Select an item...' : message;
-  value = value === undefined ? '' : value;
-  id = id === undefined ? '' : id;
-  classes = classes === undefined ? '' : classes;
+  message = (typeof message === 'undefined' ? 'Select an item...' : message);
+  value = (typeof value === 'undefined' ? '' : value);
+  id = (typeof id === 'undefined' ? '' : id);
+  classes = (typeof classes === 'undefined' ? '' : classes);
 
   var select = [];
   select.push(Utilities.formatString('<select id="%s" class="%s">', id, classes));
 
   // Construct the default option if there is no assigned value
-  if (value === '' || value === null || value === undefined) {
+  if (value === '' || value === null || typeof value === 'undefined') {
     select.push('<option value="" class="default">' + message + '</option>');
   }
 
@@ -191,7 +191,7 @@ function showCheckboxes(name, items, allChecked) {
  */
 function constructColumnSelectItems_(columns, startIndex) {
   var items = [];
-  var firstIndex = startIndex === undefined ? 1 : startIndex;
+  var firstIndex = (typeof startIndex === 'undefined' ? 1 : startIndex);
   for (var i = 0; i < columns.length; i++) {
     var col = columns[i];
     var colNum = i + firstIndex;

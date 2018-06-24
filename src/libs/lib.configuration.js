@@ -24,7 +24,7 @@ var Configuration = {
   * @returns {Configuration} An instance of the Configuration settings object.
   */
   getCurrent: function() {
-    if (typeof getDefaultConfiguration_ === undefined) {
+    if (typeof getDefaultConfiguration_ === 'undefined') {
       throw 'You must provide an implementation of getDefaultConfiguration_' +
           'to use this configuration library.';
     }
