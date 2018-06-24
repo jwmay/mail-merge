@@ -88,7 +88,7 @@ OptionsDisplay.prototype.getAdvancedOptionsDisplay = function() {
               '</select>' +
             '</div>' +
             '<div class="form-group">' +
-              '<h4 class="form-check-header">Output Files</h4>' +
+              '<h4 class="form-check-header">Output Files <em>(letters only)</em></h4>' +
               '<span class="help-text">Select the number of output files to generate.</span>' +
               '<div class="form-check">' +
                 '<input class="form-check-input" type="radio" name="numOutputFiles" id="numOutputFilesSingle" value="single" ' + selected.singleFile + '>' +
@@ -112,6 +112,7 @@ OptionsDisplay.prototype.getAdvancedOptionsDisplay = function() {
               'Uncheck to disable this method of speeding up letter merges, which places the ' +
               'output into tables with no padding or border. Disabling this should only be needed ' +
               'when the formatting of the output document fails to match that of the template document.' +
+              'Merges will take a few minutes for a large (>40) number of records.' +
             '</span>' +
             '<div class="form-check">' +
               '<input class="form-check-input" type="checkbox" value="tableWrapMergeEnable" id="tableWrapMerge" ' + selected.tableWrapMerge + '>' +
