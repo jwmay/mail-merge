@@ -72,7 +72,10 @@ OptionsDisplay.prototype.getAdvancedOptionsDisplay = function() {
           '<div class="form-group">' +
             '<label for="outputFileName">' +
               'Output File Name' +
-              '<span class="help-text">Specify an output file name to override the default shown below.</span>' +
+              '<span class="help-text">' +
+                'Specify an output file name to override the default shown below.<br>' +
+                'Merge fields can be used in the file name for multi-file letter merges only.' +
+              '</span>' +
             '</label>' +
             '<input type="text" class="form-control" id="outputFileName" placeholder="[Merge Output] Simply Mail Merge - Dev - Letter Template with Header" value="' + selected.filename + '">' +
           '</div>' +

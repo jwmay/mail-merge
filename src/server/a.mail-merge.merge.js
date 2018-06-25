@@ -72,12 +72,14 @@ Merge.prototype.extractElements = function(container) {
  * from the configuration object if in debug mode so that the same document can
  * be reused during testing eliminating the creation of numerous documents.
  * 
+ * @param {array} fields An array containing the names of the merge fields.
+ * @param {array} record An array containing the record data.
  * @returns {OutputDocument} An OutputDocument instance of the output file.
  */
-Merge.prototype.getOutputDocument = function() {
+Merge.prototype.getOutputDocument = function(fields, record) {
   var fileId = '';
   if (this.config.debug === false || (this.config.debug === true && this.config.outputFileId === '')) {
-    var fileName = this.getOutputDocumentFileName();
+    var fileName = this.getOutputDocumentFileName(fields, record);
     fileId = this.template.makeCopy(fileName);
   } else {
     fileId = this.config.outputFileId;
@@ -89,15 +91,20 @@ Merge.prototype.getOutputDocument = function() {
 /**
  * Returns the file name to be applied to the output document.
  * 
+ * @param {array} fields An array containing the names of the merge fields.
+ * @param {array} record An array containing the record data.
  * @returns {string} The output file name.
  */
-Merge.prototype.getOutputDocumentFileName = function() {
+Merge.prototype.getOutputDocumentFileName = function(fields, record) {
   // If the user did not specify a file name, use the default
   if (this.options.outputFileName === '') {
     return this.config.outputFileNamePrefix + this.template.getName();
   } else {
-    // @todo need to filter the given filename to replace merge fields
-    return this.options.outputFileName;
+    var fileName = this.options.outputFileName;
+    if (this.options.numOutputFiles === 'multi') {
+      fileName = this.replaceMergeFields(fileName, record, fields);
+    }
+    return fileName;
   }
 };
 
@@ -173,9 +180,8 @@ Merge.prototype.runMerge = function() {
 
       // Set the url for display in the success message
       this.outputUrl = output.getUrl();
-      log('this.outputUrl: ' + this.outputUrl);
 
-      // Convert output file to PDF if option is selected
+      // Convert output file to PDF if option is selected and update the url
       if (this.options.outputFileType === 'pdf') {
         var outputDocumentBlob = output.document
             .getAs('application/pdf')
@@ -187,13 +193,26 @@ Merge.prototype.runMerge = function() {
       }
     }
 
-    // Return a success message with a link to the output document
-    var content = '' +
-        'Merge complete! ' +
-        '<a href="' + this.outputUrl + '">' +
-          'Click here' +
-        '</a> to open the output document.';
+    // Return a success message with a link to the output document or to the
+    // folder containing the output files when multi-file selected (at this 
+    // time that folder is the parent folder of the template file)
+    var content = '';
+    if (this.options.numOutputFiles === 'multi') {
+      this.outputUrl = this.template.getParentFolder().getUrl();
+      content = '' +
+          'Merge complete! ' +
+          '<a href="' + this.outputUrl + '">' +
+            'Click here' +
+          '</a> to view the output documents folder.';
+    } else {
+      content = '' +
+          'Merge complete! ' +
+          '<a href="' + this.outputUrl + '">' +
+            'Click here' +
+          '</a> to open the output document.';
+    }
     return getDisplayObject('alert-success', content);
+  
   } else {
     // Return an error DisplayObject if the merge failed
     return error;
@@ -316,14 +335,23 @@ Merge.prototype.runLabelMerge = function(records, fields) {
  *    a DisplayObject instance with an error message.
  */
 Merge.prototype.runLetterMerge = function(records, fields) {
-  var output = this.getOutputDocument();
-  output.clearBody();
-
   // Loop over each record in the data spreadsheet and add it to the output
   var numRecords = this.spreadsheet.getRecordCount();
   for (var recordNum = 1; recordNum < records.length; recordNum++) {
     // Get the current record
     var record = records[recordNum];
+
+    // Get information about the current page to which the record corresponds
+    var page = {
+      first: (recordNum === 1 ? true : false),
+      last: (recordNum === numRecords ? true : false),
+    };
+
+    // Create new output file if this is first record or if multi-file selected
+    if (page.first === true || this.options.numOutputFiles === 'multi') {
+      output = this.getOutputDocument(fields, record);
+      output.clearBody();
+    }
   
     // Replace all of the fields in a copy of the body element of the template
     // document with their respective values
@@ -334,26 +362,16 @@ Merge.prototype.runLetterMerge = function(records, fields) {
     var bodyElements = this.extractElements(bodyCopy);
     
     // Add the modified template body elements to the output document
-    var page = {
-      first: (recordNum === 1 ? true : false),
-      last: (recordNum === numRecords ? true : false),
-    };
     output.insertNewPage(bodyElements, page);
 
-    // Process and save the current output file if multi-file option selected
-    // or if on the last page of a single-file output
+    // Process and save the current output file if on the last page of a
+    // single-file output or if multi-file option selected
     if (this.options.numOutputFiles === 'multi' || page.last === true) {
       // Remove the extra empty paragraph elements added after each table
       output.removeTableParagraphs();
       
       // Save the output document to an object property array for final processing
       this.outputFiles.push(output);
-    }
-
-    // Create new output file if multi-file selected and not on last record
-    if (this.options.numOutputFiles === 'multi' && page.last === false) {
-      output = this.getOutputDocument();
-      output.clearBody();
     }
   }
 
@@ -379,20 +397,38 @@ Merge.prototype.runLetterMerge = function(records, fields) {
  *    a DisplayObject instance with an error message.
  */
 Merge.prototype.runTableWrappedLetterMerge = function(records, fields) {
-  var output = this.getOutputDocument();
-  output.clearBody();
-  output.shiftMargins();
-
-  // Wrap the content of the template body into a table cell to speed up the
-  // merge process by minimizing the number of append calls to the output
-  var bodyElements = this.extractElements(this.template.getBodyCopy());
-  var bodyWrapper = new BodyWrapper(output.body, bodyElements);
-
   // Loop over each record in the data spreadsheet and add it to the output
   var numRecords = this.spreadsheet.getRecordCount();
   for (var recordNum = 1; recordNum < records.length; recordNum++) {
     // Get the current record
     var record = records[recordNum];
+
+    // Get information about the current page to which the record corresponds
+    var page = {
+      first: (recordNum === 1 ? true : false),
+      last: (recordNum === numRecords ? true : false),
+    };
+
+    // Create new output file if this is first record or if multi-file selected
+    if (page.first === true || this.options.numOutputFiles === 'multi') {
+      output = this.getOutputDocument(fields, record);
+      output.clearBody();
+      output.shiftMargins();
+
+      /**
+       * Wrap the content of the template body into a table cell to speed up the
+       * merge process by minimizing the number of append calls to the output.
+       * 
+       * Need to extract new elements and create a new body wrapper for each
+       * record when producing multiple output files due to issue with images
+       * not showing up in all records but the first (only guess at this time
+       * is an issue with Google Apps Script); this will hurt the cost savings
+       * with the table-wrapped method as it now makes as many server-side
+       * append calls as the non-table-wrapped method.
+       */
+      bodyElements = this.extractElements(this.template.getBodyCopy());
+      bodyWrapper = new BodyWrapper(output.body, bodyElements);
+    }
 
     // Replace all of the fields in a copy of the table-wrapped body element of
     // the template document with their respective values
@@ -403,31 +439,12 @@ Merge.prototype.runTableWrappedLetterMerge = function(records, fields) {
     bodyWrapper.table = tableWrappedBody;
     
     // Add the modified table-wrapped template body elements to the output
-    var page = {
-      first: (recordNum === 1 ? true : false),
-      last: (recordNum === numRecords ? true : false),
-    };
     bodyWrapper.appendWrappedBody(output.body, page);
 
-    // Save the current output file if multi-file option selected or if on the
-    // last page of a single-file output
-    if (this.options.numOutputFiles === 'multi' || page.last === true) {
+    // Save the current output file if on the last page of a single-file output
+    // or if the multi-file option is selected
+    if (page.last === true || this.options.numOutputFiles === 'multi') {
       this.outputFiles.push(output);
-    }
-
-    // Create new output file if multi-file selected and not on last record
-    if (this.options.numOutputFiles === 'multi' && page.last === false) {
-      output = this.getOutputDocument();
-      output.clearBody();
-      output.shiftMargins();
-
-      // Need to extract new elements and create a new body wrapper due to issue
-      // with images not showing up in all records but the first (only guess at
-      // this time is an issue with Google Apps Script); this will hurt the cost
-      // savings with the table-wrapped method as it now makes as many server-
-      // side append calls as the non-table-wrapped method
-      bodyElements = this.extractElements(this.template.getBodyCopy());
-      bodyWrapper = new BodyWrapper(output.body, bodyElements);
     }
   }
 
@@ -440,13 +457,21 @@ Merge.prototype.runTableWrappedLetterMerge = function(records, fields) {
  * Replaces all of the merge fields in the given element with data from the
  * given record. This method modifies the content of the given element.
  * 
- * @param {Element} element The element whose text will be searched and repalced.
+ * @param {Element|string} element The element or string whose text will be
+ *    searched and repalced.
  * @param {array} record An array containing the record data.
  * @param {array} fields An array containing the names of the merge fields.
+ * @returns {Element|string} The element or string itself.
  */
 Merge.prototype.replaceMergeFields = function(element, record, fields) {
   for (var fieldNum = 0; fieldNum < fields.length; fieldNum++) {
     var field = fields[fieldNum];
-    element.replaceText('<<' + field + '>>', record[fieldNum]);
+    var searchValue = ('<<' + field + '>>');
+    if (typeof element === 'string') {
+      element = element.replace(searchValue, record[fieldNum]);
+    } else {
+      element.replaceText(searchValue, record[fieldNum]);
+    }
   }
+  return element;
 };
