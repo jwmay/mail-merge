@@ -114,7 +114,7 @@ OptionsDisplay.prototype.getAdvancedOptionsDisplay = function() {
             '<span class="help-text">' +
               'Uncheck to disable this method of speeding up letter merges, which places the ' +
               'output into tables with no padding or border. Disabling this should only be needed ' +
-              'when the formatting of the output document fails to match that of the template document.' +
+              'when the formatting of the output document fails to match that of the template document. ' +
               'Merges will take a few minutes for a large (>40) number of records.' +
             '</span>' +
             '<div class="form-check">' +

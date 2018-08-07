@@ -235,77 +235,83 @@ Merge.prototype.runLabelMerge = function(records, fields) {
 
   // Label merges only work when the template document has one table
   if (numTables === 1) {
-    // The output document is only created if we can perform a merge
-    var output = this.getOutputDocument();
-    output.clearBody();
+    try {
+      // The output document is only created if we can perform a merge
+      var output = this.getOutputDocument();
+      output.clearBody();
 
-    // Use to determine the current row and column positions for each cell of
-    // the output table; contains max number of rows and columns in the table
-    var tableInfo = this.template.getTableDimensions();
+      // Use to determine the current row and column positions for each cell of
+      // the output table; contains max number of rows and columns in the table
+      var tableInfo = this.template.getTableDimensions();
 
-    // Get a copy of the template table (from the output document).
-    // When using a copy of the table from the template document, any images
-    // in the table cells would show up as blank images (likely due to an image
-    // source error). Retrieving copies directly from the output document (which
-    // is created as a copy of the template document file) preserves the images.
-    var tableCopy = output.getTableCopy();
-    
-    var tableNum = 0; // count the number of appended tables
-    var numRecords = this.spreadsheet.getRecordCount();
-    for (var recordNum = 1; recordNum < records.length; recordNum++) {
-      var record = records[recordNum];
+      // Get a copy of the template table (from the output document).
+      // When using a copy of the table from the template document, any images
+      // in the table cells would show up as blank images (likely due to an image
+      // source error). Retrieving copies directly from the output document (which
+      // is created as a copy of the template document file) preserves the images.
+      var tableCopy = output.getTableCopy();
+      
+      var tableNum = 0; // count the number of appended tables
+      var numRecords = this.spreadsheet.getRecordCount();
+      for (var recordNum = 1; recordNum < records.length; recordNum++) {
+        var record = records[recordNum];
 
-      // Get the current row and column positions in the table
-      var current = {
-        rowNum: tableInfo.currentRow(recordNum),
-        colNum: tableInfo.currentCol(recordNum)
-      };
+        // Get the current row and column positions in the table
+        var current = {
+          rowNum: tableInfo.currentRow(recordNum),
+          colNum: tableInfo.currentCol(recordNum)
+        };
 
-      // Get the current table cell; note that the cell row and column positions
-      // are shifted by 1 because Google starts their indexes at 0
-      var cellRow = (current.rowNum - 1);
-      var cellCol = (current.colNum - 1);
-      var currentTableCell = tableCopy.getCell(cellRow, cellCol);
+        // Get the current table cell; note that the cell row and column positions
+        // are shifted by 1 because Google starts their indexes at 0
+        var cellRow = (current.rowNum - 1);
+        var cellCol = (current.colNum - 1);
+        var currentTableCell = tableCopy.getCell(cellRow, cellCol);
 
-      // Replace all of the fields in the current cell of the copied table
-      this.replaceMergeFields(currentTableCell, record, fields);
+        // Replace all of the fields in the current cell of the copied table
+        this.replaceMergeFields(currentTableCell, record, fields);
 
-      // Tasks for when the end of the table or the last record is reached
-      if (current.rowNum === tableInfo.rows && current.colNum === tableInfo.cols || recordNum === numRecords) {
-        // Tables must have a paragraph before and after them, this ensures the
-        // table appears in the same position on every page of the document
-        if (tableNum !== 0) {
-          output.body.appendParagraph('');
-        }
-        
-        // Clear any unused cells in the last row of the table
-        if (recordNum === numRecords) {
-          var numCellsToClear = (tableInfo.cols - current.colNum) + (tableInfo.rows - current.rowNum) * tableInfo.cols;
-          if (numCellsToClear > 0) {
-            for (var cellNum = 0; cellNum < numCellsToClear; cellNum++) {
-              // Add the next record number to the cell number to clear all
-              // remaining unused cells
-              var currentCell = (cellNum + recordNum + 1);
-              var rowNum = tableInfo.currentRow(currentCell);
-              var colNum = tableInfo.currentCol(currentCell);
-              // Shifts of -1 account for cell indexes starting at 0
-              tableCopy.getCell((rowNum - 1), (colNum - 1)).clear();
+        // Tasks for when the end of the table or the last record is reached
+        if (current.rowNum === tableInfo.rows && current.colNum === tableInfo.cols || recordNum === numRecords) {
+          // Tables must have a paragraph before and after them, this ensures the
+          // table appears in the same position on every page of the document
+          if (tableNum !== 0) {
+            output.body.appendParagraph('');
+          }
+          
+          // Clear any unused cells in the last row of the table
+          if (recordNum === numRecords) {
+            var numCellsToClear = (tableInfo.cols - current.colNum) + (tableInfo.rows - current.rowNum) * tableInfo.cols;
+            if (numCellsToClear > 0) {
+              for (var cellNum = 0; cellNum < numCellsToClear; cellNum++) {
+                // Add the next record number to the cell number to clear all
+                // remaining unused cells
+                var currentCell = (cellNum + recordNum + 1);
+                var rowNum = tableInfo.currentRow(currentCell);
+                var colNum = tableInfo.currentCol(currentCell);
+                // Shifts of -1 account for cell indexes starting at 0
+                tableCopy.getCell((rowNum - 1), (colNum - 1)).clear();
+              }
             }
           }
+          
+          // Append the table, get a new table copy, and update the table counter
+          output.body.appendTable(tableCopy);
+          tableCopy = output.getTableCopy();
+          tableNum += 1;
         }
-        
-        // Append the table, get a new table copy, and update the table counter
-        output.body.appendTable(tableCopy);
-        tableCopy = output.getTableCopy();
-        tableNum += 1;
       }
-    }
 
-    // Save the output document to an object property array for final processing
-    this.outputFiles.push(output);
-    
-    // No errors so return null
-    return null;
+      // Save the output document to an object property array for final processing
+      this.outputFiles.push(output);
+      
+      // No errors so return null
+      return null;
+
+    } catch (err) {
+      var error = '<strong>ERROR[' + err.name + ']</strong>: ' + err.message;
+      return getDisplayObject('alert-error', error);
+    }
 
   } else {
     // An incorrect number of tables were found in the template document
@@ -335,48 +341,54 @@ Merge.prototype.runLabelMerge = function(records, fields) {
  *    a DisplayObject instance with an error message.
  */
 Merge.prototype.runLetterMerge = function(records, fields) {
-  // Loop over each record in the data spreadsheet and add it to the output
-  var numRecords = this.spreadsheet.getRecordCount();
-  for (var recordNum = 1; recordNum < records.length; recordNum++) {
-    // Get the current record
-    var record = records[recordNum];
+  try {
+    // Loop over each record in the data spreadsheet and add it to the output
+    var numRecords = this.spreadsheet.getRecordCount();
+    for (var recordNum = 1; recordNum < records.length; recordNum++) {
+      // Get the current record
+      var record = records[recordNum];
 
-    // Get information about the current page to which the record corresponds
-    var page = {
-      first: (recordNum === 1 ? true : false),
-      last: (recordNum === numRecords ? true : false),
-    };
+      // Get information about the current page to which the record corresponds
+      var page = {
+        first: (recordNum === 1 ? true : false),
+        last: (recordNum === numRecords ? true : false),
+      };
 
-    // Create new output file if this is first record or if multi-file selected
-    if (page.first === true || this.options.numOutputFiles === 'multi') {
-      output = this.getOutputDocument(fields, record);
-      output.clearBody();
-    }
-  
-    // Replace all of the fields in a copy of the body element of the template
-    // document with their respective values
-    var bodyCopy = this.template.getBodyCopy();
-    this.replaceMergeFields(bodyCopy, record, fields);
+      // Create new output file if this is first record or if multi-file selected
+      if (page.first === true || this.options.numOutputFiles === 'multi') {
+        output = this.getOutputDocument(fields, record);
+        output.clearBody();
+      }
     
-    // Convert the body into an array of its child elements
-    var bodyElements = this.extractElements(bodyCopy);
-    
-    // Add the modified template body elements to the output document
-    output.insertNewPage(bodyElements, page);
-
-    // Process and save the current output file if on the last page of a
-    // single-file output or if multi-file option selected
-    if (this.options.numOutputFiles === 'multi' || page.last === true) {
-      // Remove the extra empty paragraph elements added after each table
-      output.removeTableParagraphs();
+      // Replace all of the fields in a copy of the body element of the template
+      // document with their respective values
+      var bodyCopy = this.template.getBodyCopy();
+      this.replaceMergeFields(bodyCopy, record, fields);
       
-      // Save the output document to an object property array for final processing
-      this.outputFiles.push(output);
-    }
-  }
+      // Convert the body into an array of its child elements
+      var bodyElements = this.extractElements(bodyCopy);
+      
+      // Add the modified template body elements to the output document
+      output.insertNewPage(bodyElements, page);
 
-  // No errors so return null
-  return null;
+      // Process and save the current output file if on the last page of a
+      // single-file output or if multi-file option selected
+      if (this.options.numOutputFiles === 'multi' || page.last === true) {
+        // Remove the extra empty paragraph elements added after each table
+        output.removeTableParagraphs();
+        
+        // Save the output document to an object property array for final processing
+        this.outputFiles.push(output);
+      }
+    }
+
+    // No errors so return null
+    return null;
+
+  } catch (err) {
+    var error = '<strong>ERROR[' + err.name + ']</strong>: ' + err.message;
+    return getDisplayObject('alert-error', error);
+  }
 };
 
 
@@ -397,59 +409,65 @@ Merge.prototype.runLetterMerge = function(records, fields) {
  *    a DisplayObject instance with an error message.
  */
 Merge.prototype.runTableWrappedLetterMerge = function(records, fields) {
-  // Loop over each record in the data spreadsheet and add it to the output
-  var numRecords = this.spreadsheet.getRecordCount();
-  for (var recordNum = 1; recordNum < records.length; recordNum++) {
-    // Get the current record
-    var record = records[recordNum];
+  try {
+    // Loop over each record in the data spreadsheet and add it to the output
+    var numRecords = this.spreadsheet.getRecordCount();
+    for (var recordNum = 1; recordNum < records.length; recordNum++) {
+      // Get the current record
+      var record = records[recordNum];
 
-    // Get information about the current page to which the record corresponds
-    var page = {
-      first: (recordNum === 1 ? true : false),
-      last: (recordNum === numRecords ? true : false),
-    };
+      // Get information about the current page to which the record corresponds
+      var page = {
+        first: (recordNum === 1 ? true : false),
+        last: (recordNum === numRecords ? true : false),
+      };
 
-    // Create new output file if this is first record or if multi-file selected
-    if (page.first === true || this.options.numOutputFiles === 'multi') {
-      output = this.getOutputDocument(fields, record);
-      output.clearBody();
-      output.shiftMargins();
+      // Create new output file if this is first record or if multi-file selected
+      if (page.first === true || this.options.numOutputFiles === 'multi') {
+        output = this.getOutputDocument(fields, record);
+        output.clearBody();
+        output.shiftMargins();
 
-      /**
-       * Wrap the content of the template body into a table cell to speed up the
-       * merge process by minimizing the number of append calls to the output.
-       * 
-       * Need to extract new elements and create a new body wrapper for each
-       * record when producing multiple output files due to issue with images
-       * not showing up in all records but the first (only guess at this time
-       * is an issue with Google Apps Script); this will hurt the cost savings
-       * with the table-wrapped method as it now makes as many server-side
-       * append calls as the non-table-wrapped method.
-       */
-      bodyElements = this.extractElements(this.template.getBodyCopy());
-      bodyWrapper = new BodyWrapper(output.body, bodyElements);
+        /**
+         * Wrap the content of the template body into a table cell to speed up the
+         * merge process by minimizing the number of append calls to the output.
+         * 
+         * Need to extract new elements and create a new body wrapper for each
+         * record when producing multiple output files due to issue with images
+         * not showing up in all records but the first (only guess at this time
+         * is an issue with Google Apps Script); this will hurt the cost savings
+         * with the table-wrapped method as it now makes as many server-side
+         * append calls as the non-table-wrapped method.
+         */
+        bodyElements = this.extractElements(this.template.getBodyCopy());
+        bodyWrapper = new BodyWrapper(output.body, bodyElements);
+      }
+
+      // Replace all of the fields in a copy of the table-wrapped body element of
+      // the template document with their respective values
+      var tableWrappedBody = bodyWrapper.getTableCopy();
+      this.replaceMergeFields(tableWrappedBody, record, fields);
+
+      // Save the updated table for appending to the output
+      bodyWrapper.table = tableWrappedBody;
+      
+      // Add the modified table-wrapped template body elements to the output
+      bodyWrapper.appendWrappedBody(output.body, page);
+
+      // Save the current output file if on the last page of a single-file output
+      // or if the multi-file option is selected
+      if (page.last === true || this.options.numOutputFiles === 'multi') {
+        this.outputFiles.push(output);
+      }
     }
 
-    // Replace all of the fields in a copy of the table-wrapped body element of
-    // the template document with their respective values
-    var tableWrappedBody = bodyWrapper.getTableCopy();
-    this.replaceMergeFields(tableWrappedBody, record, fields);
+    // No errors so return null
+    return null;
 
-    // Save the updated table for appending to the output
-    bodyWrapper.table = tableWrappedBody;
-    
-    // Add the modified table-wrapped template body elements to the output
-    bodyWrapper.appendWrappedBody(output.body, page);
-
-    // Save the current output file if on the last page of a single-file output
-    // or if the multi-file option is selected
-    if (page.last === true || this.options.numOutputFiles === 'multi') {
-      this.outputFiles.push(output);
-    }
+  } catch (err) {
+    var error = '<strong>ERROR[' + err.name + ']</strong>: ' + err.message;
+    return getDisplayObject('alert-error', error);
   }
-
-  // No errors so return null
-  return null;
 };
 
 
