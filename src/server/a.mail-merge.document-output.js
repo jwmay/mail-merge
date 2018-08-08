@@ -49,6 +49,11 @@ OutputDocument.prototype.applyChanges = function() {
  * copy of the original body document is saved in the body property.
  */
 OutputDocument.prototype.clearBody = function() {
+  // Check that last element type is a paragraph; if not, add a paragraph to
+  // avoid the error, "Can't remove the last paragraph in a document section."
+  if (this.getLastElementType() !== DocumentApp.ElementType.PARAGRAPH) {
+    this.body.appendParagraph('');
+  }
   this.body.clear();
 };
 
@@ -95,6 +100,18 @@ OutputDocument.prototype.getBodyCopy = function() {
  */
 OutputDocument.prototype.getDocument = function() {
   return DocumentApp.openById(this.id);
+};
+
+
+/**
+ * Returns the element type of the last element in the document.
+ * 
+ * @returns {ElementType} The element type.
+ */
+OutputDocument.prototype.getLastElementType = function() {
+  var numElements = this.body.getNumChildren();
+  var lastElement = this.body.getChild(numElements - 1);
+  return lastElement.getType();
 };
 
 
