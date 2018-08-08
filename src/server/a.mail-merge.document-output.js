@@ -208,21 +208,25 @@ OutputDocument.prototype.removeTableParagraphs = function() {
 
 
 /**
- * Reduces the top and bottom margins of the document by 0.05 inches to account
- * for the table wrapper around the body.
+ * Reduces the top and bottom margins of the document by 0.05 inches and the 
+ * right magin by 1pt to account for the table wrapper around the body.
  * 
  * This method is for letter merges that use the table wrapping feature to speed
  * up the merge. Goolge requires a paragraph before and after the table when it
  * is at the beginning and/or end of a document. While those paragraph elements
  * have been reduced to a 1px font size, there is still some spacing issues that
  * this fixes. The shift of 0.05 inches (3.6 pts) was determined during testing.
+ * The right margin shift is due to the 1pt of padding in the table to prevent
+ * overlap disappearance of contained tables.
  */
 OutputDocument.prototype.shiftMargins = function() {
   var shift = 3.6;
   var topMargin = this.body.getMarginTop();
   var bottomMargin = this.body.getMarginBottom();
+  var rightMargin = this.body.getMarginRight();
   this.body.setMarginTop(topMargin - shift);
   this.body.setMarginBottom(bottomMargin - shift);
+  this.body.setMarginRight(rightMargin - 1);
 };
 
 
@@ -255,7 +259,7 @@ var BodyWrapper = function(body, content) {
       .setPaddingBottom(0)
       .setPaddingLeft(0)
       // Fix for right border of table elements 'disappearing'; this small
-      // amount of padding prevents thier right border from being hidden by
+      // amount of padding prevents their right border from being hidden by
       // the surrouing table wrapper
       .setPaddingRight(1)
       .setPaddingTop(0);
