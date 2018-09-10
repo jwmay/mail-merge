@@ -65,7 +65,12 @@ OutputDocument.prototype.clearBody = function() {
  * document for editing.
  */
 OutputDocument.prototype.closeFile = function() {
-  this.document.saveAndClose();
+  this.document.saveAndClose();  // this is where the script dies :?
+  // * * *  DEBUG  * * *
+  // Template document cannot have PageBreak elements when doing a table-wrapped
+  // letter merge because table cells cannot contain a page break. Need to either
+  // (1) warn user they cannot use this method with page breaks or add support
+  // for page breaks by creating a new table container.
 };
 
 
@@ -356,6 +361,15 @@ BodyWrapper.prototype.insertContent = function(content) {
   for (var i = 0; i < content.length; i++) {
     var element = content[i];
     var type = element.getType();
+    // DEBUG: We can find pagebreaks within the paragraph elements, now what do
+    // we do: create a new table, or simply warn not to have them, or use the
+    // non-table-wrapped merge function?
+    // At this time, we will warn the user and remove the page breaks if the
+    // user continues with the table-wrapped letter merge method
+    var searchResult = element.findElement(DocumentApp.ElementType.PAGE_BREAK);
+    if (searchResult) {
+      searchResult.getElement().removeFromParent();
+    }
     if (type == DocumentApp.ElementType.PARAGRAPH) {
       this.tableCell.appendParagraph(element);
     } else if (type == DocumentApp.ElementType.LIST_ITEM) {

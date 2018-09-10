@@ -138,27 +138,48 @@ Merge.prototype.runMerge = function() {
     // Allow user to select letter merge method; slower method may better
     // preserve formatting if the table-wrapped method cannot
     if (this.options.tableWrapMerge === 'enable') {
-      // Warn the user if the template has a blank line, which will not format
-      // correctly in the output via the table-wrapped method; the blank line
-      // needs a space character
-      if (this.template.startsWithBlankLine() === false) {
+      var continueMerge = 'yes';
+      var warning = '';
+
+      // Warn the user if the template starts with a blank line, which will not
+      // format correctly in the output via the table-wrapped method; the blank
+      // line needs a space character
+      var startsWithBlankLine = this.template.startsWithBlankLine();
+
+      // Warn the user if the template contains a page break, which is not
+      // supported by the table-wrapped letter merge; if the user continues, the
+      // page breaks will be removed in the output document
+      var hasPageBreak = this.template.hasPageBreak();
+
+      if (startsWithBlankLine === false && hasPageBreak === false) {
         error = this.runTableWrappedLetterMerge(records, fields);
-      } else {
+      } else if (startsWithBlankLine === true) {
         // Alert the user about how to proceed when the document starts with a
         // blank line (a paragraph with no text); adding a simple space to this
         // paragraph will preserve the formatting
-        var warning = 'Your document starts with a blank line. To preserve ' +
+        warning = 'Your document starts with a blank line. To preserve ' +
             'the formatting of your document, a space should be inserted ' +
             'into this blank line before merging. (Or you can use a slower ' +
             'merge method that may better preserve your formatting by going ' +
             'to the advanced section of the Merge Options.)\n\n' +
             'Would you like to continue with the merge?';
-        var continueMerge = showConfirmation('Blank line warning', warning);
-        if (continueMerge === 'yes') {
-          error = this.runTableWrappedLetterMerge(records, fields);
-        } else {
-          error = getDisplayObject('alert-warning', 'Merge canceled.');
-        }
+        continueMerge = showConfirmation('Blank line warning', warning);
+      } else if (hasPageBreak === true) {
+        // Alert the user about how to proceed when the document contains a page
+        // break; continuing with the table-wrapped letter merge will remove the
+        // page breaks from the output document; otherwise, the normal letter
+        // merge method can be used or the page breaks can be removed
+        warning = 'Your document contains a page break. To preseve the ' +
+            'formatting of your document, all page breaks should be replaced ' +
+            'or the table-wrapped merge method should not be used (see ' +
+            'the advanced section of the Merge Options to disable it).\n\n' +
+            'Would you like to continue with the merge?';
+        continueMerge = showConfirmation('Page break warning', warning);
+      }
+      if (continueMerge === 'yes') {
+        error = this.runTableWrappedLetterMerge(records, fields);
+      } else {
+        error = getDisplayObject('alert-warning', 'Merge canceled.');
       }
     } else {
       error = this.runLetterMerge(records, fields);
@@ -443,8 +464,8 @@ Merge.prototype.runTableWrappedLetterMerge = function(records, fields) {
         bodyWrapper = new BodyWrapper(output.body, bodyElements);
       }
 
-      // Replace all of the fields in a copy of the table-wrapped body element of
-      // the template document with their respective values
+      // Replace all of the fields in a copy of the table-wrapped body element
+      // of the template document with their respective values
       var tableWrappedBody = bodyWrapper.getTableCopy();
       this.replaceMergeFields(tableWrappedBody, record, fields);
 
@@ -454,8 +475,8 @@ Merge.prototype.runTableWrappedLetterMerge = function(records, fields) {
       // Add the modified table-wrapped template body elements to the output
       bodyWrapper.appendWrappedBody(output.body, page);
 
-      // Save the current output file if on the last page of a single-file output
-      // or if the multi-file option is selected
+      // Save the current output file if on the last page of a single-file
+      // output or if the multi-file option is selected
       if (page.last === true || this.options.numOutputFiles === 'multi') {
         this.outputFiles.push(output);
       }

@@ -6,6 +6,8 @@ Refactoring considerations - A Rough "Style" Guide
 Features
 --------
 
+  * check if document has list items and warn user to create multiple files
+    to preserve the number sequencing (keep from 1,2,3...4,5,6...etc.)
   * check list items (is the number consecutive between documents) using the two
     different merge methods
   * can we do a progress bar using the CacheService and Cache classes? Save

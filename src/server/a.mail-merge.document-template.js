@@ -182,6 +182,20 @@ TemplateDocument.prototype.getTableDimensions = function() {
 
 
 /**
+ * Returns true if the document body contains a page break element, otherwise,
+ * returns false.
+ * 
+ * @returns {Boolean} True if a page break element is found in the body.
+ */
+TemplateDocument.prototype.hasPageBreak = function() {
+  var body = this.getBodyCopy();
+  var hasPageBreak = body.findElement(DocumentApp.ElementType.PAGE_BREAK);
+  if (hasPageBreak) return true;
+  return false;
+};
+
+
+/**
  * Inserts the merge field into the template document as <<field>>. Returns null
  * if the field was successfully inserted, otherwise, returns a DisplayObject
  * instance containing the error message.
