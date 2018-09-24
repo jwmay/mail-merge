@@ -38,17 +38,17 @@ function showAlert(title, message) {
 
 /**
  * Displays an alert with 'Yes' and 'No' buttons. Returns the user selection as
- * a 'yes' or 'no' string.
+ * true ('yes') or false ('no').
  * 
  * @param {string} title The title of the alert.
  * @param {string} message The message to display.
- * @returns {string} The response as a 'yes' or 'no'.
+ * @returns {boolean} The response as a true ('yes') or false ('no').
  */
 function showConfirmation(title, message) {
   var ui = DocumentApp.getUi();
   var result = ui.alert(title, message, ui.ButtonSet.YES_NO);
-  if (result === ui.Button.YES) return 'yes';
-  return 'no';
+  if (result === ui.Button.YES) return true;
+  return false;
 }
 
 
