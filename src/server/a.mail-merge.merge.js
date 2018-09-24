@@ -138,7 +138,7 @@ Merge.prototype.runMerge = function() {
     // Allow user to select letter merge method; slower method may better
     // preserve formatting if the table-wrapped method cannot
     if (this.options.tableWrapMerge === 'enable') {
-      var continueMerge = 'yes';
+      var continueMerge = false;
       var warning = '';
 
       // Warn the user if the template starts with a blank line, which will not
@@ -152,7 +152,7 @@ Merge.prototype.runMerge = function() {
       var hasPageBreak = this.template.hasPageBreak();
 
       if (startsWithBlankLine === false && hasPageBreak === false) {
-        error = this.runTableWrappedLetterMerge(records, fields);
+        continueMerge = true;
       } else if (startsWithBlankLine === true) {
         // Alert the user about how to proceed when the document starts with a
         // blank line (a paragraph with no text); adding a simple space to this
@@ -161,7 +161,7 @@ Merge.prototype.runMerge = function() {
             'the formatting of your document, a space should be inserted ' +
             'into this blank line before merging. (Or you can use a slower ' +
             'merge method that may better preserve your formatting by going ' +
-            'to the advanced section of the Merge Options.)\n\n' +
+            'to the Advanced options section of the Merge Options.)\n\n' +
             'Would you like to continue with the merge?';
         continueMerge = showConfirmation('Blank line warning', warning);
       } else if (hasPageBreak === true) {
@@ -169,14 +169,15 @@ Merge.prototype.runMerge = function() {
         // break; continuing with the table-wrapped letter merge will remove the
         // page breaks from the output document; otherwise, the normal letter
         // merge method can be used or the page breaks can be removed
-        warning = 'Your document contains a page break. To preseve the ' +
-            'formatting of your document, all page breaks should be replaced ' +
-            'or the table-wrapped merge method should not be used (see ' +
-            'the advanced section of the Merge Options to disable it).\n\n' +
+        warning = 'Your document contains page breaks, which will be removed ' +
+            'if you continue. To preseve the formatting of your document, ' +
+            'all page breaks should be replaced or the table-wrapped merge ' +
+            'method should not be used (see the Advanced options section of ' +
+            'the Merge options to disable it).\n\n' +
             'Would you like to continue with the merge?';
         continueMerge = showConfirmation('Page break warning', warning);
       }
-      if (continueMerge === 'yes') {
+      if (continueMerge === true) {
         error = this.runTableWrappedLetterMerge(records, fields);
       } else {
         error = getDisplayObject('alert-warning', 'Merge canceled.');
